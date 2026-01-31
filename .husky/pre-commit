@@ -1,0 +1,2 @@
+# Pre-commit hook: catch version mismatches and test failures before committing
+bash scripts/check-versions.sh && npm test

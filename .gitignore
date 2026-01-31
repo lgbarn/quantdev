@@ -1,0 +1,30 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Dependencies
+node_modules/
+
+# Quantdev project state (local only)
+.quantdev/
+.quantdev.archived/
+.quantdev.bak.*/
+
+# OMC state (not part of this repo)
+.omc/
+
+# Secrets
+.env
+.env.*
+credentials.json
+*.pem
+*.key

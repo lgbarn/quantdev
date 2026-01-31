@@ -1,0 +1,55 @@
+{
+  "name": "@lgbarn/quantdev",
+  "version": "1.0.0",
+  "description": "Trading development plugin: indicators, bots, backtesting, optimization, and quantitative research — from hypothesis to production",
+  "keywords": [
+    "claude-code-plugin",
+    "trading",
+    "indicators",
+    "backtesting",
+    "quantitative",
+    "bots",
+    "pine-script",
+    "ninjatrader",
+    "parallel-agents",
+    "tdd"
+  ],
+  "author": "lgbarn",
+  "license": "MIT",
+  "systemDependencies": {
+    "bash": ">=4.0",
+    "jq": ">=1.6",
+    "git": ">=2.20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lgbarn/quantdev.git"
+  },
+  "homepage": "https://github.com/lgbarn/quantdev",
+  "bugs": {
+    "url": "https://github.com/lgbarn/quantdev/issues"
+  },
+  "scripts": {
+    "test": "bash test/run.sh",
+    "test:fast": "bats --filter-tags unit test/*.bats",
+    "test:ci": "bash -c 'JOBS=(); command -v parallel &>/dev/null && JOBS=(--jobs 4); ./node_modules/.bin/bats \"${JOBS[@]}\" --formatter tap test/*.bats'",
+    "prepare": "husky"
+  },
+  "files": [
+    ".claude-plugin/",
+    "agents/",
+    "commands/",
+    "skills/",
+    "hooks/",
+    "scripts/",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "devDependencies": {
+    "bats": "^1.13.0",
+    "bats-assert": "^2.2.4",
+    "bats-support": "^0.3.0",
+    "husky": "^9.1.7"
+  }
+}

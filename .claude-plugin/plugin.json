@@ -1,0 +1,9 @@
+{
+  "name": "quantdev",
+  "version": "1.0.0",
+  "description": "Trading development plugin: indicators, bots, backtesting, optimization, and quantitative research",
+  "author": {
+    "name": "lgbarn",
+    "email": "lgbarn@users.noreply.github.com"
+  }
+}
