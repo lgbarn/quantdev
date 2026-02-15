@@ -474,7 +474,7 @@ func TestKeltnerStrategyRegression(t *testing.T) {
 
 ## Testing Anti-Patterns
 
-When adding mocks or test utilities, invoke `quantdev:quantdev-testing` for guidance on:
+Common anti-patterns to avoid:
 - Testing mock behavior instead of real behavior
 - Adding test-only methods to production classes
 - Mocking without understanding dependencies

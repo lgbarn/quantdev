@@ -4,7 +4,7 @@ description: |
   Use this agent to compare indicator outputs across Go, Python, Pine Script, NinjaScript, and Tradovate JS against golden reference data. Examples: <example>Context: A new indicator has been implemented on multiple platforms. user: "Validate the SuperTrend indicator across Go and Pine Script" assistant: "I'll dispatch the cross-platform validator to run both implementations with identical inputs, compare outputs bar-by-bar against golden reference data, and flag any drift beyond epsilon tolerance." <commentary>The validator compares platform outputs against golden data with configurable precision.</commentary></example> <example>Context: An indicator was updated and needs re-validation. user: "Re-validate EMA after the Go implementation change" assistant: "I'll dispatch the cross-platform validator to re-run all platform implementations and verify they still match the golden reference within tolerance." <commentary>After any indicator code change, cross-platform validation should be re-run.</commentary></example>
 model: haiku
 color: cyan
-tools: Read, Bash
+tools: Read, Bash, Write
 permissionMode: default
 maxTurns: 15
 ---

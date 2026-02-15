@@ -4,7 +4,7 @@ description: |
   Use this agent for root-cause analysis of trading bugs: session boundary issues, timezone problems, bar alignment, data gaps, indicator divergence across platforms, and backtest vs live discrepancies. Examples: <example>Context: An indicator produces different values in Go vs Pine Script. user: "My EMA values differ between Go and Pine Script by 0.02 on bar 47" assistant: "I'll dispatch the debugger to investigate — checking bar alignment, floating-point precision, warmup period differences, and comparing against golden reference data." <commentary>The debugger checks trading-specific bug sources first before generic debugging.</commentary></example> <example>Context: A bot's live performance doesn't match backtests. user: "The Keltner bot made 12 trades in backtest but only 3 live in the same period" assistant: "I'll dispatch the debugger to analyze backtest vs live discrepancies — checking slippage modeling, fill assumptions, data feed differences, and session boundary handling." <commentary>Backtest-vs-live discrepancies often stem from unrealistic fill assumptions or data differences.</commentary></example>
 model: sonnet
 color: red
-tools: Read, Grep, Glob, Bash
+tools: Read, Grep, Glob, Bash, Write
 permissionMode: default
 maxTurns: 20
 ---

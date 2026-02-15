@@ -447,10 +447,7 @@ git worktree remove <worktree-path>
 ## Integration
 
 **Called by:**
-- **quantdev:quantdev-brainstorming** - When design is approved and implementation follows
-- **quantdev:quantdev-executing-plans** - After all tasks complete
-- Any skill needing isolated workspace
+- Any skill or command needing isolated workspace
 
 **Pairs with:**
-- **quantdev:quantdev-executing-plans** - Work happens in the worktree this skill creates
-- **quantdev:quantdev-writing-plans** - Plans are executed in worktrees
+- Trading indicator, bot, and research workflows that benefit from branch isolation

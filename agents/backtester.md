@@ -134,8 +134,10 @@ You MUST:
 - Include trade distribution in every report
 - Recommend OOS testing if only IS results exist
 - Verify data files exist before running backtests
-- Check that data availability before attempting backtest runs
+- Check data availability before attempting backtest runs
+- Save raw results alongside analysis
+
+You MUST NOT:
 - Run backtests without checking data availability first
 - Report results without checking for overfitting flags
-- Save raw results alongside analysis
 </rules>

@@ -35,7 +35,7 @@ PLUGIN_ROOT="$(cd "$(dirname "$(readlink -f "$0" 2>/dev/null || echo "$0")")/.."
 ```
 
 Verify these exist:
-- `plugin.json` — Plugin manifest
+- `.claude-plugin/plugin.json` — Plugin manifest
 - `hooks/` — Hook scripts directory
 - `scripts/` — Script files
 - `skills/` — Skill definitions
@@ -55,7 +55,7 @@ List all discovered skills by name.
 
 ## Step 4: Check Hooks Registered
 
-Read `plugin.json` and verify hooks are defined:
+Read `.claude-plugin/plugin.json` and verify hooks are defined:
 - `SessionStart` hook → `scripts/state-read.sh`
 - `PreToolUse` hooks (if any)
 - `PostToolUse` hooks (if any)
@@ -109,7 +109,7 @@ Trading Dependencies:
   python3      {PASS|WARN: needed for Tier 1}
 
 Plugin Structure:
-  plugin.json  {PASS|FAIL}
+  .claude-plugin/plugin.json  {PASS|FAIL}
   hooks/       {PASS|FAIL}
   scripts/     {PASS|FAIL}
   skills/      {PASS|FAIL} ({N} skills)
