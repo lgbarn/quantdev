@@ -14,8 +14,6 @@ if [ "${QUANTDEV_DISABLE_HOOKS:-}" = "true" ]; then exit 0; fi
 HOOK_NAME="$(basename "${BASH_SOURCE[0]}" .sh)"
 if [[ ",${QUANTDEV_SKIP_HOOKS:-}," == *",$HOOK_NAME,"* ]]; then exit 0; fi
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-
 # Check for jq dependency
 if ! command -v jq >/dev/null 2>&1; then
     echo "WARNING: jq not found, skipping backtest integrity check" >&2
