@@ -17,12 +17,12 @@ teardown() {
 
 # Helper: create a fake marketplace git repo
 setup_marketplace_repo() {
-    local mkt_dir="${HOME}/.claude/plugins/marketplaces/shipyard"
+    local mkt_dir="${HOME}/.claude/plugins/marketplaces/quantdev"
     mkdir -p "$mkt_dir"
     cd "$mkt_dir"
     git init -q
-    git config user.email "test@shipyard.dev"
-    git config user.name "Shipyard Test"
+    git config user.email "test@quantdev.dev"
+    git config user.name "Quantdev Test"
     mkdir -p .claude-plugin
     echo '{"name":"test","version":"1.0.0"}' > .claude-plugin/plugin.json
     git add .
@@ -45,14 +45,14 @@ setup_marketplace_repo() {
 
 # bats test_tags=unit
 @test "marketplace-sync: skips sync when timestamp is recent" {
-    local config_dir="${HOME}/.config/shipyard"
+    local config_dir="${HOME}/.config/quantdev"
     mkdir -p "$config_dir"
 
     # Set timestamp to "now" — well within 3600s cooldown
     date +%s > "${config_dir}/marketplace-sync.last"
 
     # Create a marketplace dir (but don't need a real repo since throttle exits first)
-    mkdir -p "${HOME}/.claude/plugins/marketplaces/shipyard/.git"
+    mkdir -p "${HOME}/.claude/plugins/marketplaces/quantdev/.git"
 
     run bash "$MARKETPLACE_SYNC"
     assert_success
@@ -63,12 +63,12 @@ setup_marketplace_repo() {
 
 # bats test_tags=unit
 @test "marketplace-sync: handles non-numeric timestamp gracefully" {
-    local config_dir="${HOME}/.config/shipyard"
+    local config_dir="${HOME}/.config/quantdev"
     mkdir -p "$config_dir"
     echo "not-a-number" > "${config_dir}/marketplace-sync.last"
 
     # Create marketplace dir so we get past the early exit
-    mkdir -p "${HOME}/.claude/plugins/marketplaces/shipyard/.git"
+    mkdir -p "${HOME}/.claude/plugins/marketplaces/quantdev/.git"
 
     # Non-numeric timestamp is reset to 0, so sync proceeds (exits 0)
     run bash "$MARKETPLACE_SYNC"
@@ -79,7 +79,7 @@ setup_marketplace_repo() {
 
 # bats test_tags=integration
 @test "marketplace-sync: updates timestamp file on sync attempt" {
-    local config_dir="${HOME}/.config/shipyard"
+    local config_dir="${HOME}/.config/quantdev"
     mkdir -p "$config_dir"
 
     # Create a real marketplace repo
@@ -114,7 +114,7 @@ setup_marketplace_repo() {
 
 # bats test_tags=unit
 @test "marketplace-sync: exits 0 when marketplace dir exists but has no .git" {
-    mkdir -p "${HOME}/.claude/plugins/marketplaces/shipyard"
+    mkdir -p "${HOME}/.claude/plugins/marketplaces/quantdev"
     # No .git inside — script should exit 0 silently
 
     run bash "$MARKETPLACE_SYNC"

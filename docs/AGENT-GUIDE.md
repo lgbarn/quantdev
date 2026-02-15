@@ -216,7 +216,7 @@ Optimizer → Risk Analyst
 ### Documenter
 
 - **Model:** sonnet (configurable via `model_routing.documentation`)
-- **Dispatched by:** Auto-triggered after indicator/bot/research work, or `/quantdev:document` on-demand
+- **Dispatched by:** Auto-triggered after indicator/bot/research work
 - **Max turns:** 20
 - **Inputs:** Git diff, SUMMARY.md files, existing docs, KNOWLEDGE.md
 - **Outputs:** Strategy journals (`.quantdev/strategies/{name}/JOURNAL.md`), knowledge base updates, parameter docs, indicator API docs

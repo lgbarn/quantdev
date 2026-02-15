@@ -14,7 +14,7 @@ description: Use when starting feature work that needs a branch, creating worktr
 - Starting feature work that needs branch isolation
 - Creating, switching, or removing worktrees
 - Completing a development branch (merge, PR, preserve, discard)
-- `/quantdev:worktree` command invoked
+- User requests worktree setup for isolated development
 
 ## Natural Language Triggers
 - "create branch", "commit this", "merge branch", "start feature", "set up worktree"

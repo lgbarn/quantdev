@@ -11,7 +11,7 @@ description: Use when capturing discoveries after phase completion, before shipp
 
 ## When to Use
 
-- After phase completion during `/quantdev:ship` (Step 3a)
+- After completing indicator, bot, or research workflows
 - When reflecting on completed work to extract reusable knowledge
 - When a build summary contains notable discoveries worth preserving
 
@@ -175,6 +175,6 @@ Why it fails: A code change, not a reusable insight.
 
 ## Integration
 
-**Referenced by:** `commands/ship.md` Step 7 for post-phase lesson capture.
+**Referenced by:** Indicator, bot, and research workflows for post-work lesson capture.
 
 **Pairs with:** `quantdev:quantdev-verification` for validating lesson quality before persisting.

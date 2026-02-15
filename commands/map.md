@@ -41,7 +41,7 @@ Question text: "Teams available. Use team mode (parallel teammates) or agent mod
 
 **Variable storage:** Store the result as `dispatch_mode` (value: `team` or `agent`). This variable is referenced by all subsequent dispatch steps.
 
-**Note:** Team mode provides parallelism benefit only for `map all` (4 mapper agents). Single-focus maps always use Task dispatch regardless of `dispatch_mode`.
+**Note:** Team mode provides parallelism benefit only for `map all` (4 builder agents in parallel). Single-focus maps always use Task dispatch regardless of `dispatch_mode`.
 
 </prerequisites>
 
@@ -102,7 +102,7 @@ Dispatch **4 builder agents** in parallel, one per focus area (indicators, strat
 1. `TeamCreate(name: "quantdev-map-all")` — create a single team
 2. For each of the 4 focus areas, `TaskCreate` with appropriate subject and description
 3. `TaskUpdate` to pre-assign each task to a specific teammate name
-4. For each task, `Task(team_name: "quantdev-map-all", name: "mapper-{focus}", subagent_type: "quantdev:builder")` to spawn the teammate
+4. For each task, `Task(team_name: "quantdev-map-all", name: "builder-{focus}", subagent_type: "quantdev:builder")` to spawn the teammate
 5. Monitor progress via `TaskList` — poll until all 4 tasks reach a terminal state
 6. `SendMessage(shutdown_request)` to all teammates, then `TeamDelete(name: "quantdev-map-all")`
 

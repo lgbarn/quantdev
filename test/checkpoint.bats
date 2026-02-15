@@ -12,7 +12,7 @@ load test_helper
     assert_output --partial "pre-build-phase-2"
 
     # Verify tag exists in git
-    run git tag -l "shipyard-checkpoint-*"
+    run git tag -l "quantdev-checkpoint-*"
     assert_output --partial "pre-build-phase-2"
 }
 
@@ -50,7 +50,7 @@ load test_helper
     setup_git_repo
 
     # Create a fake old checkpoint tag (simulate by directly creating with old-looking timestamp)
-    git tag -a "shipyard-checkpoint-old-20200101T000000Z" -m "old checkpoint"
+    git tag -a "quantdev-checkpoint-old-20200101T000000Z" -m "old checkpoint"
     # Create a recent tag
     bash "$CHECKPOINT" "recent"
 
@@ -60,11 +60,11 @@ load test_helper
     assert_output --partial "Pruned"
 
     # Verify old tag is gone
-    run git tag -l "shipyard-checkpoint-old-*"
+    run git tag -l "quantdev-checkpoint-old-*"
     refute_output --partial "20200101"
 
     # Verify recent tag still exists
-    run git tag -l "shipyard-checkpoint-recent-*"
+    run git tag -l "quantdev-checkpoint-recent-*"
     assert_success
     [ -n "$output" ]
 }

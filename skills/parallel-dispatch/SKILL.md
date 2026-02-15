@@ -48,8 +48,8 @@ Quantdev multi-agent commands (`build`, `plan`, `map`, `ship`) use a standardize
 - `SendMessage(shutdown_request)` + `TeamDelete` for cleanup
 
 **Key rules:**
-- Single-agent steps (verifier, auditor, simplifier, documenter) always use Task dispatch regardless of mode
-- Team mode provides real value only for parallel steps (multiple builders per wave, multiple reviewers per wave, multiple mappers)
+- Single-agent steps (verifier, risk-analyst, documenter, researcher) always use Task dispatch regardless of mode
+- Team mode provides real value only for parallel steps (multiple builders per wave, multiple reviewers per wave)
 - Team cleanup (shutdown + delete) is mandatory, even on error
 - Pre-assign tasks before spawning to avoid race conditions
 

@@ -88,7 +88,7 @@ Dispatching a Builder → use "opus" (user override)
 Dispatching a Reviewer → use "haiku" (user override)
 Dispatching a Verifier → use "haiku" (default — no override specified)
 Dispatching an Architect → use "opus" (default — no override specified)
-Dispatching a Simplifier → use "sonnet" (default — no override for `simplification`)
+Dispatching an Optimizer → use "sonnet" (default — no override for `simplification`)
 </example>
 
 ### Model Selection Guidance
@@ -256,7 +256,7 @@ Current directory is `/home/user/myproject-phase-3` → operating in worktree.
 ## Issue Tracking Protocol
 
 <purpose>
-Persist non-blocking findings in `.quantdev/ISSUES.md` so they survive across sessions and accumulate for later resolution. Without this, reviewer and auditor suggestions are lost when the session ends.
+Persist non-blocking findings in `.quantdev/ISSUES.md` so they survive across sessions and accumulate for later resolution. Without this, reviewer and risk analyst suggestions are lost when the session ends.
 </purpose>
 
 <instructions>
@@ -265,7 +265,7 @@ When non-blocking issues are found (Important or Suggestion severity):
 1. Check if `.quantdev/ISSUES.md` exists; if not, create it with the table header
 2. Append findings as new rows to the Open Issues table
 3. Auto-increment the ID from the highest existing ID
-4. Set `source` to the agent role (e.g., "reviewer", "auditor", "simplifier")
+4. Set `source` to the agent role (e.g., "reviewer", "risk-analyst", "verifier")
 5. Map severity: Important → medium, Suggestion → low
 6. Set date to current date (YYYY-MM-DD)
 </instructions>
@@ -274,7 +274,7 @@ When non-blocking issues are found (Important or Suggestion severity):
 - Never overwrite existing issues — only append new rows
 - Critical findings are NOT issues — they block the pipeline and must be resolved immediately
 - Do not duplicate: check if a similar issue already exists before appending
-- Issues are resolved via `/quantdev:issues` which marks them as closed
+- Issues are resolved manually or during `/quantdev:review` which marks them as closed
 </rules>
 
 <example description="Appending a reviewer finding to ISSUES.md">
@@ -342,9 +342,9 @@ Define the standard context bundle to pass when dispatching any agent via the Ta
 **Agent-specific additions:**
 - **Builder:** CONVENTIONS.md, results from previous waves in the same phase, CONTEXT file
 - **Reviewer:** Git diff of changed files, the plan being reviewed, CONTEXT file
-- **Auditor:** All changed files across the phase, dependency manifests (package.json, Cargo.toml, go.mod, etc.)
-- **Documenter:** Existing docs in `docs/`, all SUMMARY.md files from the milestone
-- **Simplifier:** All changed files across the phase, original plan scope for comparison
+- **Backtester:** HYPOTHESIS.md, PARAMS.json, data files in `data/GLBX/`
+- **Documenter:** Existing docs in `docs/`, strategy journals, knowledge base
+- **Risk Analyst:** Strategy code, backtest results, Apex account constraints
 </instructions>
 
 <rules>
@@ -383,12 +383,14 @@ Pass `max_turns` when dispatching agents via the Task tool to prevent runaway ex
 | Builder | 30 | Executes up to 3 tasks with TDD cycles; each task may need ~10 turns |
 | Reviewer | 15 | Reviews a single plan's diff; scope is bounded |
 | Verifier | 15 | Runs verification commands and checks criteria |
-| Auditor | 15 | Analyzes phase diff against security checklist |
-| Simplifier | 10 | Read-only analysis of phase changes |
 | Documenter | 20 | May generate multiple documentation files |
-| Researcher | 15 | Web search + codebase analysis |
-| Architect | 15 | Plan decomposition bounded by 3-task-max rule |
-| Mapper | 20 | Deep codebase analysis of one focus area |
+| Researcher | 25 | Web search + statistical analysis |
+| Architect | 20 | Strategy design and regime-aware reasoning |
+| Backtester | 20 | Orchestrates backtest engine runs |
+| Optimizer | 25 | Parameter sweeps and sensitivity analysis |
+| Risk Analyst | 20 | Position sizing and drawdown modeling |
+| Cross-Platform Validator | 15 | Golden-file comparison across platforms |
+| Debugger | 20 | Root cause analysis with 5-Whys protocol |
 
 Commands that dispatch agents should include the `max_turns` parameter in the Task tool call alongside `subagent_type` and `model`.
 
@@ -653,7 +655,7 @@ Standardize the detect/ask/branch pattern used by multi-agent commands (build, p
 
 6. **Agent mode:** Standard `Task(subagent_type, model, prompt)` dispatch. No TeamCreate/SendMessage/TeamDelete overhead.
 
-7. **Single-agent exception:** Steps that dispatch only one agent (verifier, auditor, simplifier, documenter, researcher, architect) always use Task dispatch regardless of `dispatch_mode`. Team overhead is not justified for a single agent.
+7. **Single-agent exception:** Steps that dispatch only one agent (verifier, risk-analyst, documenter, researcher, architect) always use Task dispatch regardless of `dispatch_mode`. Team overhead is not justified for a single agent.
 
 8. **Team cleanup is mandatory:** Always run `SendMessage(shutdown_request)` + `TeamDelete` even if errors occur. Before any early return or error exit in team mode, ensure team cleanup runs. Never leave orphaned teams.
 </instructions>
@@ -673,6 +675,6 @@ Build command (parallel builders, single-agent reviewers):
 2. Step 4a (Builders): if team → TeamCreate + TaskCreate + spawn; if agent → parallel Task calls
 3. Step 4c (Reviewers): if team → same team or new team + TaskCreate + spawn; if agent → parallel Task calls
 4. Step 5 (Verifier): always Task dispatch (single agent)
-5. Steps 5a/5b/5c (Audit, Simplify, Document): always Task dispatch (single agent)
+5. Step 5a (Documenter): always Task dispatch (single agent)
 6. Team Cleanup: shutdown + delete after each team-mode section
 </example>

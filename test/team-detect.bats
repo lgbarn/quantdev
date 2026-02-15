@@ -9,30 +9,30 @@ load test_helper
         unset CLAUDE_CODE_TEAM_NAME 2>/dev/null || true
         unset CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS 2>/dev/null || true
         source "$TEAM_DETECT"
-        [ "$SHIPYARD_IS_TEAMMATE" = "false" ]
-        [ "$SHIPYARD_TEAMS_ENABLED" = "false" ]
-        [ "$SHIPYARD_TEAM_NAME" = "" ]
+        [ "$QUANTDEV_IS_TEAMMATE" = "false" ]
+        [ "$QUANTDEV_TEAMS_ENABLED" = "false" ]
+        [ "$QUANTDEV_TEAM_NAME" = "" ]
     )
 }
 
 # bats test_tags=unit
-@test "team-detect: CLAUDE_CODE_TEAM_NAME set exports SHIPYARD_IS_TEAMMATE=true" {
+@test "team-detect: CLAUDE_CODE_TEAM_NAME set exports QUANTDEV_IS_TEAMMATE=true" {
     (
         unset CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS 2>/dev/null || true
         export CLAUDE_CODE_TEAM_NAME="my-team"
         source "$TEAM_DETECT"
-        [ "$SHIPYARD_IS_TEAMMATE" = "true" ]
-        [ "$SHIPYARD_TEAM_NAME" = "my-team" ]
+        [ "$QUANTDEV_IS_TEAMMATE" = "true" ]
+        [ "$QUANTDEV_TEAM_NAME" = "my-team" ]
     )
 }
 
 # bats test_tags=unit
-@test "team-detect: CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 exports SHIPYARD_TEAMS_ENABLED=true" {
+@test "team-detect: CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 exports QUANTDEV_TEAMS_ENABLED=true" {
     (
         unset CLAUDE_CODE_TEAM_NAME 2>/dev/null || true
         export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS="1"
         source "$TEAM_DETECT"
-        [ "$SHIPYARD_TEAMS_ENABLED" = "true" ]
+        [ "$QUANTDEV_TEAMS_ENABLED" = "true" ]
     )
 }
 
@@ -42,9 +42,9 @@ load test_helper
         export CLAUDE_CODE_TEAM_NAME="alpha-team"
         export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS="1"
         source "$TEAM_DETECT"
-        [ "$SHIPYARD_IS_TEAMMATE" = "true" ]
-        [ "$SHIPYARD_TEAMS_ENABLED" = "true" ]
-        [ "$SHIPYARD_TEAM_NAME" = "alpha-team" ]
+        [ "$QUANTDEV_IS_TEAMMATE" = "true" ]
+        [ "$QUANTDEV_TEAMS_ENABLED" = "true" ]
+        [ "$QUANTDEV_TEAM_NAME" = "alpha-team" ]
     )
 }
 
@@ -54,8 +54,8 @@ load test_helper
         export CLAUDE_CODE_TEAM_NAME=""
         unset CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS 2>/dev/null || true
         source "$TEAM_DETECT"
-        [ "$SHIPYARD_IS_TEAMMATE" = "false" ]
-        [ "$SHIPYARD_TEAM_NAME" = "" ]
+        [ "$QUANTDEV_IS_TEAMMATE" = "false" ]
+        [ "$QUANTDEV_TEAM_NAME" = "" ]
     )
 }
 

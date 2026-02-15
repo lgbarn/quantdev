@@ -416,10 +416,10 @@ if [ -d ".quantdev" ]; then
         # Command auto-suggestions based on current state
         case "$status" in
             ready)
-                suggestion="**Suggested next step:** \`/quantdev:plan ${phase:-1}\` -- Plan the current phase"
+                suggestion="**Suggested next step:** \`/quantdev:indicator\`, \`/quantdev:bot\`, or \`/quantdev:research\` -- Start a new workflow"
                 ;;
             planned)
-                suggestion="**Suggested next step:** \`/quantdev:build ${phase:-1}\` -- Execute the planned phase"
+                suggestion="**Suggested next step:** \`/quantdev:resume\` -- Continue the current workflow"
                 ;;
             planning)
                 suggestion="**Suggested next step:** Continue planning or run \`/quantdev:status\` to check progress"
@@ -431,9 +431,9 @@ if [ -d ".quantdev" ]; then
                 # Check if more phases exist
                 next_phase=$((${phase:-0} + 1))
                 if grep -qE "Phase ${next_phase}|Phase 0${next_phase}" ".quantdev/ROADMAP.md" 2>/dev/null; then
-                    suggestion="**Suggested next step:** \`/quantdev:plan ${next_phase}\` -- Plan the next phase"
+                    suggestion="**Suggested next step:** \`/quantdev:indicator\`, \`/quantdev:bot\`, or \`/quantdev:research\` -- Start next workflow"
                 else
-                    suggestion="**Suggested next step:** \`/quantdev:ship\` -- All phases complete, ready to deliver"
+                    suggestion="**Suggested next step:** All work complete. Run \`/quantdev:status\` to review."
                 fi
                 ;;
             shipped)
@@ -447,7 +447,7 @@ if [ -d ".quantdev" ]; then
             # Subtract header rows (2 per table section)
             issue_count=$((issue_count > 4 ? issue_count - 4 : 0))
             if [ "$issue_count" -gt 0 ]; then
-                suggestion="${suggestion}\n**Note:** ${issue_count} tracked issue(s). Run \`/quantdev:issues\` to review."
+                suggestion="${suggestion}\n**Note:** ${issue_count} tracked issue(s). Run \`/quantdev:review\` to review."
             fi
         fi
 
@@ -487,11 +487,11 @@ if [ "$HUMAN_MODE" = true ]; then
         fi
         echo "=== Suggested Action ==="
         case "$_h_status" in
-            ready)                       echo "Run: /quantdev:plan ${_h_phase}" ;;
-            planned)                     echo "Run: /quantdev:build ${_h_phase}" ;;
+            ready)                       echo "Run: /quantdev:indicator, /quantdev:bot, or /quantdev:research" ;;
+            planned|designing)           echo "Run: /quantdev:resume" ;;
             planning)                    echo "Continue planning or run /quantdev:status" ;;
             building|in_progress)        echo "Run: /quantdev:resume" ;;
-            complete|complete_with_gaps) echo "Run: /quantdev:plan $((_h_phase + 1)) or /quantdev:ship" ;;
+            complete|complete_with_gaps) echo "Run: /quantdev:indicator, /quantdev:bot, or /quantdev:research" ;;
             shipped)                     echo "Project shipped! Run /quantdev:init for new milestone" ;;
             *)                           echo "Run: /quantdev:status" ;;
         esac

@@ -3,14 +3,14 @@ load test_helper
 
 # bats test_tags=integration
 @test "integration: write then read round-trip preserves state data" {
-    setup_shipyard_dir
-    mkdir -p .shipyard/phases
+    setup_quantdev_dir
+    mkdir -p .quantdev/phases
 
     # Write known state
     bash "$STATE_WRITE" --phase 3 --position "Integration testing" --status in_progress
 
     # Verify write succeeded
-    [ -f .shipyard/STATE.json ]
+    [ -f .quantdev/STATE.json ]
 
     # Read state back via state-read.sh
     run bash "$STATE_READ"
@@ -32,7 +32,7 @@ load test_helper
     bash "$CHECKPOINT" "integration-test"
 
     # Verify it exists
-    run git tag -l "shipyard-checkpoint-integration-test-*"
+    run git tag -l "quantdev-checkpoint-integration-test-*"
     assert_success
     [ -n "$output" ]
 
@@ -41,22 +41,22 @@ load test_helper
     assert_success
 
     # Verify the tag still exists after prune
-    run git tag -l "shipyard-checkpoint-integration-test-*"
+    run git tag -l "quantdev-checkpoint-integration-test-*"
     assert_success
     [ -n "$output" ]
 }
 
 # bats test_tags=integration
 @test "integration: multiple writes accumulate history entries" {
-    setup_shipyard_dir
-    mkdir -p .shipyard/phases
+    setup_quantdev_dir
+    mkdir -p .quantdev/phases
 
     bash "$STATE_WRITE" --phase 1 --position "Step one" --status planning
     bash "$STATE_WRITE" --phase 1 --position "Step two" --status building
     bash "$STATE_WRITE" --phase 1 --position "Step three" --status complete
 
     # All three history entries should be present in HISTORY.md
-    run cat .shipyard/HISTORY.md
+    run cat .quantdev/HISTORY.md
     assert_output --partial "Step one"
     assert_output --partial "Step two"
     assert_output --partial "Step three"
@@ -64,12 +64,12 @@ load test_helper
 
 # bats test_tags=integration
 @test "integration: corrupt state detected then recovered via --recover" {
-    setup_shipyard_dir
-    mkdir -p .shipyard/phases/2/plans
-    echo "# Plan 2.1" > .shipyard/phases/2/plans/PLAN-2.1.md
+    setup_quantdev_dir
+    mkdir -p .quantdev/phases/2/plans
+    echo "# Plan 2.1" > .quantdev/phases/2/plans/PLAN-2.1.md
 
     # Write a corrupt STATE.json (malformed JSON)
-    echo "not json{" > .shipyard/STATE.json
+    echo "not json{" > .quantdev/STATE.json
 
     # Read should detect corruption (exit 2)
     run bash "$STATE_READ"
@@ -93,8 +93,8 @@ load test_helper
 
 # bats test_tags=integration
 @test "integration: schema version 3 survives write-read cycle" {
-    setup_shipyard_dir
-    mkdir -p .shipyard/phases
+    setup_quantdev_dir
+    mkdir -p .quantdev/phases
 
     # Write with structured args
     bash "$STATE_WRITE" --phase 1 --position "Schema test" --status planning
@@ -111,8 +111,8 @@ load test_helper
 # bats test_tags=integration
 @test "integration: write-recover-checkpoint round-trip" {
     setup_git_repo
-    mkdir -p .shipyard/phases/3/results
-    echo "# Summary" > .shipyard/phases/3/results/SUMMARY-3.1.md
+    mkdir -p .quantdev/phases/3/results
+    echo "# Summary" > .quantdev/phases/3/results/SUMMARY-3.1.md
 
     # Create a checkpoint first
     bash "$CHECKPOINT" "pre-recovery"
@@ -132,28 +132,28 @@ load test_helper
     assert_output --partial "Checkpoint created"
 
     # Both checkpoint tags should exist
-    run git tag -l "shipyard-checkpoint-*"
+    run git tag -l "quantdev-checkpoint-*"
     assert_output --partial "pre-recovery"
     assert_output --partial "post-recovery"
 }
 
 # bats test_tags=integration
 @test "integration: auto-migration from STATE.md to STATE.json on read" {
-    setup_shipyard_with_state
-    mkdir -p .shipyard/phases
+    setup_quantdev_with_state
+    mkdir -p .quantdev/phases
 
     # Only STATE.md exists
-    [ -f .shipyard/STATE.md ]
-    [ ! -f .shipyard/STATE.json ]
+    [ -f .quantdev/STATE.md ]
+    [ ! -f .quantdev/STATE.json ]
 
     # Read triggers migration
     run bash "$STATE_READ"
     assert_success
 
     # Both files now exist
-    [ -f .shipyard/STATE.md ]
-    [ -f .shipyard/STATE.json ]
-    [ -f .shipyard/HISTORY.md ]
+    [ -f .quantdev/STATE.md ]
+    [ -f .quantdev/STATE.json ]
+    [ -f .quantdev/HISTORY.md ]
 
     assert_valid_state_json
     assert_json_field "schema" "3"

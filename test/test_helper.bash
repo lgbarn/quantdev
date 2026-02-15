@@ -1,4 +1,4 @@
-# Shared test helper for Shipyard bats tests
+# Shared test helper for Quantdev bats tests
 # Source this at the top of every .bats file:
 #   load test_helper
 
@@ -19,17 +19,17 @@ TEAM_DETECT="${PROJECT_ROOT}/scripts/team-detect.sh"
 load "${PROJECT_ROOT}/node_modules/bats-support/load"
 load "${PROJECT_ROOT}/node_modules/bats-assert/load"
 
-# Common setup: create an isolated working directory with .shipyard skeleton
-setup_shipyard_dir() {
+# Common setup: create an isolated working directory with .quantdev skeleton
+setup_quantdev_dir() {
     cd "$BATS_TEST_TMPDIR" || return 1
-    mkdir -p .shipyard
+    mkdir -p .quantdev
 }
 
-# Create a minimal .shipyard with STATE.md
-setup_shipyard_with_state() {
-    setup_shipyard_dir
-    cat > .shipyard/STATE.md <<'STATEEOF'
-# Shipyard State
+# Create a minimal .quantdev with STATE.md
+setup_quantdev_with_state() {
+    setup_quantdev_dir
+    cat > .quantdev/STATE.md <<'STATEEOF'
+# Quantdev State
 
 **Last Updated:** 2026-01-01T00:00:00Z
 **Current Phase:** 1
@@ -49,46 +49,46 @@ assert_valid_json() {
     assert_success
 }
 
-# Create .shipyard with a corrupt (truncated) STATE.md
-setup_shipyard_corrupt_state() {
-    setup_shipyard_dir
-    echo "# Shipyard State" > .shipyard/STATE.md
+# Create .quantdev with a corrupt (truncated) STATE.md
+setup_quantdev_corrupt_state() {
+    setup_quantdev_dir
+    echo "# Quantdev State" > .quantdev/STATE.md
     # Missing required fields: Status, Current Phase
 }
 
-# Compute the lock directory path for the current .shipyard dir
+# Compute the lock directory path for the current .quantdev dir
 compute_lock_dir() {
     local dir_hash
-    dir_hash=$(cd .shipyard && pwd | (sha256sum 2>/dev/null || md5sum 2>/dev/null || cksum) | cut -d' ' -f1 | cut -c1-12)
-    echo "${TMPDIR:-/tmp}/shipyard-state-${dir_hash}.lock"
+    dir_hash=$(cd .quantdev && pwd | (sha256sum 2>/dev/null || md5sum 2>/dev/null || cksum) | cut -d' ' -f1 | cut -c1-12)
+    echo "${TMPDIR:-/tmp}/quantdev-state-${dir_hash}.lock"
 }
 
 # Initialize a real git repo in BATS_TEST_TMPDIR (for checkpoint tests)
 setup_git_repo() {
     cd "$BATS_TEST_TMPDIR" || return 1
     git init -q
-    git config user.email "test@shipyard.dev"
-    git config user.name "Shipyard Test"
+    git config user.email "test@quantdev.dev"
+    git config user.name "Quantdev Test"
     echo "init" > README.md
     git add README.md
     git commit -q -m "initial commit"
 }
 
-# Create .shipyard with STATE.json fixture
-setup_shipyard_with_json_state() {
-    setup_shipyard_dir
-    cat > .shipyard/STATE.json <<'JSONEOF'
+# Create .quantdev with STATE.json fixture
+setup_quantdev_with_json_state() {
+    setup_quantdev_dir
+    cat > .quantdev/STATE.json <<'JSONEOF'
 {"schema":3,"phase":1,"position":"Testing","status":"building","updated_at":"2026-01-01T00:00:00Z","blocker":null}
 JSONEOF
-    cat > .shipyard/HISTORY.md <<'HISTEOF'
+    cat > .quantdev/HISTORY.md <<'HISTEOF'
 - [2026-01-01T00:00:00Z] Phase 1: Testing (building)
 HISTEOF
 }
 
 # Assert that STATE.json exists and has required fields
 assert_valid_state_json() {
-    [ -f .shipyard/STATE.json ] || { echo "STATE.json does not exist" >&2; return 1; }
-    jq -e 'has("schema") and has("phase") and has("status")' .shipyard/STATE.json > /dev/null 2>&1 || {
+    [ -f .quantdev/STATE.json ] || { echo "STATE.json does not exist" >&2; return 1; }
+    jq -e 'has("schema") and has("phase") and has("status")' .quantdev/STATE.json > /dev/null 2>&1 || {
         echo "STATE.json missing required fields or invalid JSON" >&2; return 1;
     }
 }
@@ -97,31 +97,31 @@ assert_valid_state_json() {
 assert_json_field() {
     local field="$1" expected="$2"
     local actual
-    actual=$(jq -r ".$field" .shipyard/STATE.json)
+    actual=$(jq -r ".$field" .quantdev/STATE.json)
     if [ "$actual" != "$expected" ]; then
         echo "Expected .$field='$expected', got '$actual'" >&2
         return 1
     fi
 }
 
-# Create .shipyard with a corrupt (malformed) STATE.json
-setup_shipyard_corrupt_json_state() {
-    setup_shipyard_dir
-    echo "not valid json{" > .shipyard/STATE.json
+# Create .quantdev with a corrupt (malformed) STATE.json
+setup_quantdev_corrupt_json_state() {
+    setup_quantdev_dir
+    echo "not valid json{" > .quantdev/STATE.json
 }
 
-# Create .shipyard with STATE.json missing required fields
-setup_shipyard_empty_json_state() {
-    setup_shipyard_dir
-    echo '{}' > .shipyard/STATE.json
+# Create .quantdev with STATE.json missing required fields
+setup_quantdev_empty_json_state() {
+    setup_quantdev_dir
+    echo '{}' > .quantdev/STATE.json
 }
 
 # Default teardown: clean up env vars that tests may set.
 # Individual test files can override this if they need custom teardown.
 teardown() {
-    unset SHIPYARD_IS_TEAMMATE SHIPYARD_TEAMS_ENABLED SHIPYARD_TEAM_NAME \
-        SHIPYARD_DISABLE_HOOKS SHIPYARD_SKIP_HOOKS SHIPYARD_LOCK_MAX_RETRIES \
-        SHIPYARD_LOCK_RETRY_DELAY \
+    unset QUANTDEV_IS_TEAMMATE QUANTDEV_TEAMS_ENABLED QUANTDEV_TEAM_NAME \
+        QUANTDEV_DISABLE_HOOKS QUANTDEV_SKIP_HOOKS QUANTDEV_LOCK_MAX_RETRIES \
+        QUANTDEV_LOCK_RETRY_DELAY \
         CLAUDE_CODE_TEAM_NAME CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS \
         2>/dev/null || true
 }

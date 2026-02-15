@@ -1,10 +1,10 @@
 #!/usr/bin/env bats
 load test_helper
 
-# E2e setup: create a fully isolated temp git repo with .shipyard skeleton
+# E2e setup: create a fully isolated temp git repo with .quantdev skeleton
 setup() {
     setup_git_repo
-    mkdir -p .shipyard/phases
+    mkdir -p .quantdev/phases
 }
 
 # bats test_tags=integration
@@ -43,7 +43,7 @@ setup() {
     assert_output --partial "Checkpoint created"
 
     # Verify checkpoint tag exists
-    run git tag -l "shipyard-checkpoint-*"
+    run git tag -l "quantdev-checkpoint-*"
     assert_success
     [ -n "$output" ]
 
@@ -56,7 +56,7 @@ setup() {
     assert_output --partial "Pruned 1 checkpoint"
 
     # Verify no checkpoint tags remain
-    run git tag -l "shipyard-checkpoint-*"
+    run git tag -l "quantdev-checkpoint-*"
     [ -z "$output" ]
 }
 
@@ -65,11 +65,11 @@ setup() {
     cd "$BATS_TEST_TMPDIR"
 
     # Create phase artifacts that recovery can discover
-    mkdir -p .shipyard/phases/2/plans
-    echo "# Plan 2.1 -- smoke test artifact" > .shipyard/phases/2/plans/PLAN-1.1.md
+    mkdir -p .quantdev/phases/2/plans
+    echo "# Plan 2.1 -- smoke test artifact" > .quantdev/phases/2/plans/PLAN-1.1.md
 
     # Remove any existing state files
-    rm -f .shipyard/STATE.json .shipyard/STATE.md
+    rm -f .quantdev/STATE.json .quantdev/STATE.md
 
     # Recover state from artifacts
     run bash "$STATE_WRITE" --recover

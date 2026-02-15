@@ -5,7 +5,7 @@ TEAMMATE_IDLE="${PROJECT_ROOT}/hooks/teammate-idle.sh"
 TASK_COMPLETED="${PROJECT_ROOT}/hooks/task-completed.sh"
 
 teardown() {
-    unset SHIPYARD_IS_TEAMMATE SHIPYARD_TEAMS_ENABLED SHIPYARD_TEAM_NAME CLAUDE_CODE_TEAM_NAME CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS SHIPYARD_DISABLE_HOOKS SHIPYARD_SKIP_HOOKS 2>/dev/null || true
+    unset QUANTDEV_IS_TEAMMATE QUANTDEV_TEAMS_ENABLED QUANTDEV_TEAM_NAME CLAUDE_CODE_TEAM_NAME CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS QUANTDEV_DISABLE_HOOKS QUANTDEV_SKIP_HOOKS 2>/dev/null || true
 }
 
 # --- Helper: create a mock npm that returns a given exit code ---
@@ -27,7 +27,7 @@ MOCKEOF
 @test "teammate-idle: exits 0 in solo mode" {
     (
         unset CLAUDE_CODE_TEAM_NAME 2>/dev/null || true
-        unset SHIPYARD_IS_TEAMMATE 2>/dev/null || true
+        unset QUANTDEV_IS_TEAMMATE 2>/dev/null || true
         run bash "$TEAMMATE_IDLE"
         [ "$status" -eq 0 ]
     )
@@ -63,17 +63,17 @@ MOCKEOF
 @test "task-completed: exits 0 in solo mode" {
     (
         unset CLAUDE_CODE_TEAM_NAME 2>/dev/null || true
-        unset SHIPYARD_IS_TEAMMATE 2>/dev/null || true
+        unset QUANTDEV_IS_TEAMMATE 2>/dev/null || true
         run bash "$TASK_COMPLETED"
         [ "$status" -eq 0 ]
     )
 }
 
 # bats test_tags=unit
-@test "task-completed: exits 0 when .shipyard directory has results" {
-    setup_shipyard_dir
-    mkdir -p .shipyard/phases/1/results
-    printf "# Summary\n\nAll tests passed.\nVerification complete.\n" > .shipyard/phases/1/results/SUMMARY-1.1.md
+@test "task-completed: exits 0 when .quantdev directory has results" {
+    setup_quantdev_dir
+    mkdir -p .quantdev/phases/1/results
+    printf "# Summary\n\nAll tests passed.\nVerification complete.\n" > .quantdev/phases/1/results/SUMMARY-1.1.md
     export CLAUDE_CODE_TEAM_NAME="test-team"
     run bash "$TASK_COMPLETED"
     [ "$status" -eq 0 ]
@@ -81,7 +81,7 @@ MOCKEOF
 
 # bats test_tags=unit
 @test "task-completed: exits 2 when no evidence exists" {
-    setup_shipyard_dir
+    setup_quantdev_dir
     export CLAUDE_CODE_TEAM_NAME="test-team"
     run bash "$TASK_COMPLETED"
     [ "$status" -eq 2 ]
@@ -90,11 +90,11 @@ MOCKEOF
 
 # bats test_tags=unit
 @test "task-completed: exits 2 when evidence exists in wrong phase" {
-    setup_shipyard_dir
+    setup_quantdev_dir
     # STATE.json says phase 2, but evidence is only in phase 1
-    echo '{"schema":3,"phase":2,"status":"building"}' > .shipyard/STATE.json
-    mkdir -p .shipyard/phases/1/results
-    printf "# Summary\n\nAll tests passed.\nVerification complete.\n" > .shipyard/phases/1/results/SUMMARY-1.1.md
+    echo '{"schema":3,"phase":2,"status":"building"}' > .quantdev/STATE.json
+    mkdir -p .quantdev/phases/1/results
+    printf "# Summary\n\nAll tests passed.\nVerification complete.\n" > .quantdev/phases/1/results/SUMMARY-1.1.md
     export CLAUDE_CODE_TEAM_NAME="test-team"
     run bash "$TASK_COMPLETED"
     [ "$status" -eq 2 ]
@@ -103,10 +103,10 @@ MOCKEOF
 
 # bats test_tags=unit
 @test "task-completed: exits 0 when evidence exists in current phase" {
-    setup_shipyard_dir
-    echo '{"schema":3,"phase":2,"status":"building"}' > .shipyard/STATE.json
-    mkdir -p .shipyard/phases/2/results
-    printf "# Summary\n\nAll tests passed.\nVerification complete.\n" > .shipyard/phases/2/results/SUMMARY-2.1.md
+    setup_quantdev_dir
+    echo '{"schema":3,"phase":2,"status":"building"}' > .quantdev/STATE.json
+    mkdir -p .quantdev/phases/2/results
+    printf "# Summary\n\nAll tests passed.\nVerification complete.\n" > .quantdev/phases/2/results/SUMMARY-2.1.md
     export CLAUDE_CODE_TEAM_NAME="test-team"
     run bash "$TASK_COMPLETED"
     [ "$status" -eq 0 ]
@@ -122,46 +122,46 @@ MOCKEOF
 # --- Kill switch tests ---
 
 # bats test_tags=unit
-@test "task-completed: SHIPYARD_DISABLE_HOOKS=true exits 0 without evidence" {
-    setup_shipyard_dir
+@test "task-completed: QUANTDEV_DISABLE_HOOKS=true exits 0 without evidence" {
+    setup_quantdev_dir
     export CLAUDE_CODE_TEAM_NAME="test-team"
-    export SHIPYARD_DISABLE_HOOKS=true
+    export QUANTDEV_DISABLE_HOOKS=true
     run bash "$TASK_COMPLETED"
     [ "$status" -eq 0 ]
 }
 
 # bats test_tags=integration
-@test "teammate-idle: SHIPYARD_DISABLE_HOOKS=true exits 0 without tests" {
+@test "teammate-idle: QUANTDEV_DISABLE_HOOKS=true exits 0 without tests" {
     setup_mock_npm 1
     export CLAUDE_CODE_TEAM_NAME="test-team"
-    export SHIPYARD_DISABLE_HOOKS=true
+    export QUANTDEV_DISABLE_HOOKS=true
     run bash "$TEAMMATE_IDLE"
     [ "$status" -eq 0 ]
 }
 
 # bats test_tags=unit
-@test "task-completed: SHIPYARD_SKIP_HOOKS=task-completed exits 0 without evidence" {
-    setup_shipyard_dir
+@test "task-completed: QUANTDEV_SKIP_HOOKS=task-completed exits 0 without evidence" {
+    setup_quantdev_dir
     export CLAUDE_CODE_TEAM_NAME="test-team"
-    export SHIPYARD_SKIP_HOOKS="task-completed"
+    export QUANTDEV_SKIP_HOOKS="task-completed"
     run bash "$TASK_COMPLETED"
     [ "$status" -eq 0 ]
 }
 
 # bats test_tags=integration
-@test "teammate-idle: SHIPYARD_SKIP_HOOKS=teammate-idle exits 0 without tests" {
+@test "teammate-idle: QUANTDEV_SKIP_HOOKS=teammate-idle exits 0 without tests" {
     setup_mock_npm 1
     export CLAUDE_CODE_TEAM_NAME="test-team"
-    export SHIPYARD_SKIP_HOOKS="teammate-idle"
+    export QUANTDEV_SKIP_HOOKS="teammate-idle"
     run bash "$TEAMMATE_IDLE"
     [ "$status" -eq 0 ]
 }
 
 # bats test_tags=unit
-@test "task-completed: SHIPYARD_SKIP_HOOKS with other hook still blocks" {
-    setup_shipyard_dir
+@test "task-completed: QUANTDEV_SKIP_HOOKS with other hook still blocks" {
+    setup_quantdev_dir
     export CLAUDE_CODE_TEAM_NAME="test-team"
-    export SHIPYARD_SKIP_HOOKS="teammate-idle"
+    export QUANTDEV_SKIP_HOOKS="teammate-idle"
     run bash "$TASK_COMPLETED"
     [ "$status" -eq 2 ]
 }
