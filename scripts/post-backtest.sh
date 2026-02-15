@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
-# PostBacktest hook: auto-flags suspicious backtest results
-# Exit 0 = allow (with warnings), Exit 2 = block with feedback
+# Post-backtest utility: auto-flags suspicious backtest results
+# Called by the backtester agent or /quantdev:backtest command.
 #
 # Checks backtest results for overfitting signals and writes
 # annotations to the strategy journal.
+# Exit 0 = clean, Exit 2 = critical flags found.
 
 set -euo pipefail
 

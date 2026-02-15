@@ -20,7 +20,6 @@
     ],
     "TeammateIdle": [
       {
-        "matcher": "",
         "hooks": [
           {
             "type": "command",
@@ -32,7 +31,6 @@
     ],
     "TaskCompleted": [
       {
-        "matcher": "",
         "hooks": [
           {
             "type": "command",
@@ -42,21 +40,8 @@
         ]
       }
     ],
-    "PostBacktest": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/post-backtest.sh",
-            "timeout": 15
-          }
-        ]
-      }
-    ],
     "Stop": [
       {
-        "matcher": "",
         "hooks": [
           {
             "type": "command",
