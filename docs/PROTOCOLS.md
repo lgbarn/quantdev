@@ -13,35 +13,34 @@ Load project state files to establish context for the current session. This is t
 <instructions>
 Read the following files (skip any that don't exist):
 
-1. `.quantdev/STATE.json` — current phase, position, status (machine state)
-2. `.quantdev/HISTORY.md` — append-only audit trail (formerly embedded in STATE.md)
-3. `.quantdev/ROADMAP.md` — phases, scope, and progress markers
-4. `.quantdev/PROJECT.md` — project overview, goals, requirements, constraints
-5. `.quantdev/config.json` — workflow preferences, model routing, gate settings
-6. Recent `SUMMARY.md` files from `.quantdev/phases/` — decisions and results from completed work
-7. Any `VERIFICATION.md` files from `.quantdev/phases/` — phase-level verification outcomes
+1. `.quantdev/STATE.json` — current track (indicator/bot/research), active strategy, status
+2. `.quantdev/PROJECT.md` — trading system vision, goals, asset focus
+3. `.quantdev/KNOWLEDGE.md` — accumulated market/strategy knowledge base
+4. `.quantdev/config.json` — platforms, data paths, execution stack, model routing
+5. Recent strategy journals from `.quantdev/strategies/{name}/JOURNAL.md` — strategy evolution and observations
+6. Recent backtest results from `.quantdev/strategies/{name}/backtests/` — performance metrics
+7. Recent research findings from `.quantdev/research/{topic}/FINDINGS.md` — quantitative insights
 
-Use STATE.json to determine the current phase and what was last completed. Use ROADMAP.md to understand the full scope and phase ordering. Use PROJECT.md for requirements context and success criteria.
+Use STATE.json to determine the current track and active work. Use PROJECT.md for trading system vision and goals. Use KNOWLEDGE.md for accumulated market knowledge.
 
-**Auto-migration:** If STATE.json is missing but STATE.md exists, state-read.sh migrates automatically.
+**State structure:** `.quantdev/STATE.json` tracks active strategies, recent backtests, pending validations, and knowledge base stats.
 </instructions>
 
 <rules>
 - Never fail if a file is missing — skip it and proceed with available context
-- STATE.json is the single source of truth for current position
-- If STATE.json and ROADMAP.md disagree on phase status, trust STATE.json (it's updated more frequently)
-- Load SUMMARY.md files only for the current and immediately preceding phase (avoid stale context)
-- HISTORY.md contains the append-only audit trail (formerly embedded in STATE.md)
+- STATE.json is the single source of truth for current work
+- Knowledge base is living documentation — always read latest before starting new work
+- Strategy journals capture evolution over time — read for context on existing strategies
+- Backtest results include overfitting flags — check before drawing conclusions
 </rules>
 
-<example description="Correct state loading order and usage">
-1. Read STATE.json → `jq -r '.phase' .quantdev/STATE.json` → "3"
-2. Read STATE.json → `jq -r '.status' .quantdev/STATE.json` → "building"
-3. Read STATE.json → `jq -r '.position' .quantdev/STATE.json` → "Plan 2.1 in progress"
-4. Read ROADMAP.md → Phase 3 has 3 plans across 2 waves
-5. Read config.json → model_routing, gate settings
-6. Read .quantdev/phases/3/wave-1/plan-1/SUMMARY.md → Wave 1 complete
-7. Conclusion: Resume building at Plan 2.1 in Phase 3
+<example description="Correct state loading for strategy work">
+1. Read STATE.json → `jq -r '.active_track' .quantdev/STATE.json` → "bot"
+2. Read STATE.json → `jq -r '.current_strategy' .quantdev/STATE.json` → "KeltnerLB"
+3. Read .quantdev/strategies/KeltnerLB/HYPOTHESIS.md → Strategy thesis and parameters
+4. Read .quantdev/strategies/KeltnerLB/JOURNAL.md → Recent observations and changes
+5. Read .quantdev/KNOWLEDGE.md → Market observations relevant to Keltner strategies
+6. Conclusion: Resume bot development for KeltnerLB strategy
 </example>
 
 ---
@@ -57,18 +56,21 @@ Read `model_routing` from `.quantdev/config.json` and map agent roles to model k
 
 | Agent Role | Config Key | Default |
 |---|---|---|
+| Strategy Architect | `model_routing.architecture` | opus |
+| Quant Researcher | `model_routing.planning` | opus |
+| Risk Analyst | `model_routing.security_audit` | opus |
 | Builder | `model_routing.building` | sonnet |
 | Reviewer | `model_routing.review` | sonnet |
-| Verifier | `model_routing.validation` | haiku |
-| Auditor | `model_routing.security_audit` | sonnet |
-| Simplifier | `model_routing.simplification` | sonnet |
-| Documenter | `model_routing.documentation` | sonnet |
-| Researcher | `model_routing.planning` | sonnet |
-| Architect | `model_routing.architecture` | opus |
+| Strategy Verifier | `model_routing.validation` | sonnet |
+| Optimizer | `model_routing.simplification` | sonnet |
+| Backtester | `model_routing.debugging` | sonnet |
 | Debugger | `model_routing.debugging` | sonnet |
-| Mapper | `model_routing.mapping` | sonnet |
+| Documenter | `model_routing.documentation` | sonnet |
+| Cross-Platform Validator | `model_routing.mapping` | haiku |
 
 The `debugging` config key maps to the debugger agent (subagent_type: `quantdev:debugger`), dispatched by `/quantdev:debug` for root-cause analysis.
+
+The `security_audit` config key maps to the Risk Analyst agent (subagent_type: `quantdev:risk-analyst`), dispatched by `/quantdev:risk` for position sizing and drawdown analysis.
 
 Pass the resolved model name as the `model` parameter in the Task tool call. Model names (`opus`, `sonnet`, `haiku`) resolve to the latest available version at dispatch time. Currently: Opus 4.6, Sonnet 4.5, Haiku 4.5.
 </instructions>
@@ -93,17 +95,18 @@ Dispatching a Simplifier → use "sonnet" (default — no override for `simplifi
 
 When customizing model routing, consider these tradeoffs:
 
-| Config Key | Upgrade to Opus When... | Downgrade to Haiku When... |
+| Config Key | Upgrade to Opus When... | Downgrade to Sonnet When... |
 |---|---|---|
-| `review` | Critical security-sensitive code; complex architectural changes | Lightweight changes; formatting-only PRs |
-| `security_audit` | **Production codebases handling PII, financial data, or complex auth systems** | Internal tools; early prototyping |
-| `building` | Complex algorithmic work; unfamiliar domains | Mechanical tasks; boilerplate generation |
-| `validation` | Complex integration verification; production readiness checks | Simple pass/fail criteria |
-| `simplification` | Large phases with many tasks; AI-heavy generation | Small phases; single-plan phases |
-| `documentation` | Public API documentation; user-facing guides | Internal documentation; changelog entries |
-| `planning` | Novel domain research; critical technology decisions | Well-understood technology choices |
-| `mapping` | Large legacy codebases; acquisition due diligence | Small projects; familiar stacks |
-| `debugging` | Complex multi-component failures; architectural issues | Simple test failures; obvious errors |
+| `architecture` | (Always Opus) Novel strategy design, regime-aware logic | N/A — always use Opus |
+| `planning` | (Always Opus) Statistical analysis, academic review | N/A — always use Opus |
+| `security_audit` | **Complex risk modeling, portfolio optimization, Kelly criterion** | Simple position sizing checks |
+| `building` | Complex algorithmic indicators; novel signal logic | Standard implementations; boilerplate |
+| `review` | Multi-platform trading correctness; complex bot logic | Simple indicator ports; formatting |
+| `validation` | Complex multi-stage empirical verification | Code-level checklist only (Stage 1) |
+| `simplification` | Deep parameter sensitivity analysis | Standard grid search |
+| `debugging` | **Complex multi-platform bugs; cross-system discrepancies** | Simple test failures; obvious errors |
+| `documentation` | Strategy journals with quantitative analysis | Simple parameter updates |
+| `mapping` | (Always Haiku) Fast golden-file comparison | N/A — always use Haiku |
 
 ### Context Tier Model Adjustment
 
@@ -130,35 +133,51 @@ When `context_tier` is `"auto"` in config.json, commands should assess the scope
 **Full config.json structure** (used during `/quantdev:init`):
 ```json
 {
-  "interaction_mode": "interactive|autonomous",
-  "git_strategy": "per_task|per_phase|manual",
-  "review_depth": "detailed|lightweight",
-  "security_audit": true,
-  "simplification_review": true,
-  "iac_validation": "auto|true|false",
-  "documentation_generation": true,
-  "codebase_docs_path": ".quantdev/codebase|docs/codebase",
-  "model_routing": {
-    "validation": "haiku",
-    "building": "sonnet",
-    "planning": "sonnet",
-    "architecture": "opus",
-    "debugging": "opus",
-    "review": "sonnet",
-    "security_audit": "sonnet",
-    "simplification": "sonnet",
-    "documentation": "sonnet",
-    "mapping": "sonnet"
+  "platforms": {
+    "tier1": ["go", "python"],
+    "tier2": ["pinescript"],
+    "tier3": ["ninjatrader", "tradovate"]
   },
-  "context_tier": "auto",
+  "data": {
+    "historical_path": "data/GLBX",
+    "formats": ["csv", "parquet"],
+    "source": "databento_manual_download"
+  },
+  "execution": {
+    "provider": "apex",
+    "api": "direct",
+    "paper_mode": true
+  },
+  "live_data": {
+    "provider": "topstepx"
+  },
+  "sessions": {
+    "timezone": "America/New_York",
+    "rth": ["09:30", "16:00"],
+    "initial_balance": ["09:30", "10:30"],
+    "overnight": ["18:00", "09:30"]
+  },
+  "model_routing": {
+    "architecture": "opus",
+    "planning": "opus",
+    "security_audit": "opus",
+    "building": "sonnet",
+    "review": "sonnet",
+    "validation": "sonnet",
+    "simplification": "sonnet",
+    "debugging": "sonnet",
+    "documentation": "sonnet",
+    "mapping": "haiku"
+  },
+  "knowledge_base": true,
   "created_at": "<timestamp>",
-  "version": "1.3"
+  "version": "1.0"
 }
 ```
 
-**Defaults:** `security_audit: true`, `simplification_review: true`, `iac_validation: "auto"`, `documentation_generation: true`, `codebase_docs_path: ".quantdev/codebase"`. Context tier defaults to `"auto"`.
+**Defaults:** Platform tiers as shown, data path `data/GLBX/`, Apex execution, TopStepX live data, ET session times, knowledge base enabled.
 
-**Config version:** The `version` field tracks the config schema version (currently `"1.3"`). This is set by `/quantdev:init` and used internally to detect when config format changes require migration. Users should not modify this field.
+**Config version:** The `version` field tracks the config schema version (currently `"1.0"` for quantdev). This is set by `/quantdev:init` and used internally to detect when config format changes require migration. Users should not modify this field.
 
 ---
 
@@ -400,51 +419,47 @@ History entries are automatically appended to `.quantdev/HISTORY.md` by state-wr
 **Canonical status values:**
 | Status | Meaning |
 |---|---|
-| `ready` | Initialized, ready to plan |
-| `planning` | Currently planning a phase |
-| `planned` | Phase planned, ready to build |
-| `building` | Currently executing a phase |
-| `shipped` | Delivery complete |
+| `ready` | Initialized, ready to start work |
+| `designing` | Strategy Architect designing strategy/indicator |
+| `building` | Builder implementing code |
+| `backtesting` | Backtester running engine |
+| `optimizing` | Optimizer running parameter sweeps |
+| `researching` | Quant Researcher conducting analysis |
+| `validating` | Cross-Platform Validator comparing implementations |
+| `deploying` | Generating deployment configs |
+| `complete` | Work completed |
 
 <rules>
-- Always commit STATE.json and HISTORY.md updates along with related artifacts in the same commit
-- History entries are append-only — never remove or edit previous entries
-- Position should be specific enough to enable resume (e.g., "Plan 2.1 building, wave 1 complete" not just "building")
-- Status transitions follow the order: ready → planning → planned → building → (back to planning for next phase, or shipped)
-- Always use state-write.sh to update state — do not manually edit STATE.json or HISTORY.md
+- Always commit STATE.json updates along with related artifacts in the same commit
+- Position should be specific enough to enable resume (e.g., "KeltnerLB building, tests passing" not just "building")
+- Status transitions follow work type: ready → designing/building/backtesting/optimizing/researching/validating/deploying → complete
+- Always use state-write.sh to update state — do not manually edit STATE.json
 </rules>
 
-<example description="State update after completing Phase 3 planning">
+<example description="State update after completing indicator design">
 Before STATE.json:
 ```json
 {
-  "last_updated": "2026-02-03",
-  "phase": "3",
-  "position": "Discussion capture complete",
-  "status": "planning"
+  "last_updated": "2026-02-14",
+  "active_track": "indicator",
+  "current_strategy": "KeltnerLB",
+  "status": "ready"
 }
 ```
 
 After running:
 ```bash
-bash scripts/state-write.sh --phase 3 --position "Phase planned (3 plans, 2 waves)" --status planned
+bash scripts/state-write.sh --track indicator --strategy KeltnerLB --status designing
 ```
 
 STATE.json now contains:
 ```json
 {
-  "last_updated": "2026-02-04",
-  "phase": "3",
-  "position": "Phase planned (3 plans, 2 waves)",
-  "status": "planned"
+  "last_updated": "2026-02-14",
+  "active_track": "indicator",
+  "current_strategy": "KeltnerLB",
+  "status": "designing"
 }
-```
-
-HISTORY.md now contains:
-```markdown
-- [2026-02-04] Phase 3 planned (3 plans, 2 waves)
-- [2026-02-03] Phase 3 discussion captured (4 decisions)
-- [2026-02-03] Phase 2 build complete (all 5 plans passed, verified, audited)
 ```
 </example>
 
@@ -567,40 +582,44 @@ Use conventional commit format: `type(scope): description`
 **Standard prefixes:**
 | Prefix | Usage |
 |---|---|
-| `feat(scope)` | New feature or capability |
-| `fix(scope)` | Bug fix |
+| `feat(scope)` | New indicator, bot, or feature |
+| `fix(scope)` | Bug fix (trading bugs, session issues, lookahead bias) |
 | `refactor(scope)` | Code change that neither fixes a bug nor adds a feature |
-| `test(scope)` | Adding or updating tests |
-| `docs(scope)` | Documentation changes |
-| `chore(scope)` | Maintenance tasks (deps, config, CI) |
+| `test(scope)` | Adding or updating tests (golden-file, behavioral, regression) |
+| `docs(scope)` | Documentation changes (strategy journals, knowledge base) |
+| `chore(scope)` | Maintenance tasks (deps, config) |
 
-**IaC prefixes** (for infrastructure-as-code changes):
-| Prefix | Usage |
-|---|---|
-| `infra(terraform)` | Terraform changes |
-| `infra(ansible)` | Ansible changes |
-| `infra(docker)` | Docker/container changes |
-| `infra(ci)` | CI/CD pipeline changes |
+**Trading-specific scopes:**
+| Scope | Usage |
+|-------|-------|
+| `(keltner)` | KeltnerLB indicator or strategy |
+| `(vwap)` | VWAPLB indicator or strategy |
+| `(supertrend)` | SupertrendLB indicator or strategy |
+| `(ema)` | EMALB indicator or strategy |
+| `(backtest)` | Backtest engine or results |
+| `(optimize)` | Optimization tooling |
+| `(risk)` | Risk analysis or position sizing |
 </instructions>
 
 <rules>
-- Scope should match the module or area affected (e.g., `auth`, `api`, `db`)
-- Description should be imperative mood, lowercase, no period: "add user validation" not "Added user validation."
+- Scope should match the indicator, bot, or component affected (e.g., `keltner`, `vwap`, `backtest`)
+- Description should be imperative mood, lowercase, no period: "add ATR filter" not "Added ATR filter."
 - Keep the first line under 72 characters
-- For Quantdev-generated commits, scope is typically the phase or plan: `feat(phase-3)` or `fix(plan-2.1)`
+- Use LB suffix in scope when referring to specific strategies: `feat(keltner): add ATR period sensitivity filter`
 </rules>
 
 <example description="Good vs bad commit messages">
 Good:
-- `feat(auth): add JWT refresh token rotation`
-- `fix(api): handle null response from payment gateway`
-- `test(phase-3): add integration tests for auth middleware`
-- `infra(docker): reduce image size with multi-stage build`
+- `feat(keltner): add ATR period sensitivity filter`
+- `fix(vwap): reset cumulative volume at session boundary`
+- `test(supertrend): add golden-file comparison for ATR calculation`
+- `refactor(signals): extract common filter interface`
+- `docs(knowledge): add regime detection findings for mean reversion`
 
 Bad:
-- `updated stuff` (no type, no scope, vague)
+- `updated indicator` (no type, no scope, vague)
 - `feat: Changes` (vague description, capitalized)
-- `fix(auth): Fixed the bug where users couldn't log in when they had special characters in their password and the server was running in production mode` (too long)
+- `fix(vwap): Fixed the bug where VWAP was carrying over across sessions and causing incorrect signals during the overnight session` (too long)
 </example>
 
 ---

@@ -1,6 +1,6 @@
 # Contributing to Quantdev
 
-Thank you for your interest in contributing to Quantdev. This guide covers how to add commands, skills, and agents, run tests, and submit pull requests.
+Thank you for your interest in contributing to Quantdev. This guide covers how to add commands, skills, and agents for trading development, run tests, and follow quantdev conventions.
 
 ## Prerequisites
 
@@ -65,20 +65,50 @@ Skills are auto-activating capabilities that trigger based on context.
 
 Agents are specialized subagents dispatched by commands.
 
-1. Create `agents/<name>.md` with YAML frontmatter:
+1. Create `.claude/agents/quantdev-<name>.md` with YAML frontmatter:
 
    ```yaml
    ---
-   name: agent-name
+   name: quantdev:<name>
    description: >
      Short description with examples of when this agent is used.
-     Example: "Dispatched by /quantdev:build to execute individual tasks."
+     Example: "Use this agent when implementing indicators or building bots."
    model: sonnet
+   tools: Read, Edit, Write, Bash, Grep, Glob
+   permissionMode: default
+   maxTurns: 20
    ---
    ```
 
 2. Valid `model` values: `opus`, `sonnet`, `haiku`, `inherit`.
 3. Add the agent to the Agents table in `README.md`.
+4. Follow the `quantdev:` prefix naming convention for all agents.
+
+## Trading-Specific Conventions
+
+### LB Branding
+- All indicators and strategies use LB suffix: KeltnerLB, SupertrendLB, VWAPLB
+- This is a hard requirement — reject PRs without LB suffix
+
+### Session Awareness
+- All times in America/New_York (ET)
+- RTH: 09:30-16:00, IB: 09:30-10:30, OVN: 18:00-09:30
+- Session-dependent indicators (VWAP, volume profile) must reset at boundaries
+
+### Platform Tiers
+- **Tier 1 (Go, Python):** Source of truth for math. Backtest engine. Live bots.
+- **Tier 2 (Pine Script):** Primary charting. Most indicators already exist here.
+- **Tier 3 (NinjaScript C#, Tradovate JS):** Port when needed.
+
+### Lookahead Prevention
+- Never reference current bar's close in entry/exit decisions
+- Use `[1]` indexing for confirmed bars
+- All indicator calculations use only closed bar data
+
+### Risk Parameters Required
+- Every bot must have: max daily loss, per-trade risk, stop loss, position limits
+- No unbounded positions allowed
+- Apex margin requirements must be validated
 
 ## Running Tests
 
@@ -103,6 +133,8 @@ Before submitting a pull request:
 2. **ShellCheck passes**: Run `shellcheck --severity=warning scripts/*.sh hooks/*.sh test/run.sh` with no errors.
 3. **No duplicated content**: Ensure documentation is not repeated across files.
 4. **Conventional commits**: Use the format `type(scope): description`. See `docs/PROTOCOLS.md` for the full commit convention.
+5. **LB suffix required**: All new indicators and strategies must use LB suffix.
+6. **Session awareness validated**: Any time-dependent code must handle session boundaries correctly.
 
 ## Markdown Style Guide
 
@@ -115,4 +147,65 @@ Before submitting a pull request:
 | File/directory names | kebab-case |
 | Tables | Pipe-delimited |
 | Code blocks | Triple-backtick with language hint |
-| TOKEN BUDGET comments | Advisory, not enforced (see [Issue #19](https://github.com/lgbarn/quantdev/issues/19)) |
+| TOKEN BUDGET comments | Advisory, not enforced |
+
+## Trading Development Guidelines
+
+### Indicator Development
+1. Design math with Strategy Architect
+2. Implement in Go first (source of truth) in `pkg/indicators/`
+3. Write golden-file tests
+4. Port to other platforms as needed
+5. Run `/quantdev:validate` to ensure cross-platform consistency
+
+### Bot Development
+1. Design entry/exit logic with Strategy Architect
+2. Define risk parameters (max loss, stop loss, position limits)
+3. Implement in Go (`pkg/engine/`, `pkg/signals/`) or Python (`lib/`, `bots/`)
+4. Include session boundary handling
+5. Never execute live trades — deployment configs only
+
+### Research Workflow
+1. Use Quant Researcher for statistical analysis
+2. Document findings in `.quantdev/research/{topic}/FINDINGS.md`
+3. Update knowledge base with market observations
+4. Flag overfitting indicators: Sharpe > 3, win rate > 75%, < 30 trades
+
+### Code Review Focus
+1. **Stage 1 (trading correctness):** Lookahead bias, session boundaries, fill assumptions, risk parameters
+2. **Stage 2 (code quality):** Platform conventions, pattern consistency, error handling
+
+## Project Structure
+
+```
+.quantdev/
+├── config.json          # platforms, data, execution, sessions
+├── PROJECT.md           # trading system vision, goals
+├── KNOWLEDGE.md         # market observations, strategy patterns, lessons
+├── STATE.json           # current track, active strategy, status
+├── strategies/
+│   └── {name}/
+│       ├── HYPOTHESIS.md    # strategy thesis, entry/exit rules
+│       ├── PARAMS.json      # current parameters
+│       ├── JOURNAL.md       # observations, changes, lessons
+│       ├── backtests/       # timestamped results
+│       └── optimization/    # parameter sweep results
+├── research/
+│   └── {topic}/
+│       └── FINDINGS.md
+└── validation/
+    └── golden/          # cross-platform reference data
+```
+
+## Common Agent Patterns
+
+When adding new agents, follow these patterns:
+
+- **Read-only analysis agents:** Researcher, Risk Analyst, Debugger, Documenter
+- **Implementation agents:** Builder (full tool access)
+- **Validation agents:** Reviewer, Strategy Verifier, Cross-Platform Validator (read + bash for tests)
+- **Orchestration agents:** Backtester, Optimizer (read + bash for runs + write for results)
+
+## Questions?
+
+Open an issue or see the design doc: `docs/plans/2026-02-14-quantdev-transformation-design.md`
