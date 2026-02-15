@@ -5,6 +5,7 @@ description: |
 model: opus
 color: cyan
 tools: Read, Grep, Glob, WebSearch, WebFetch, Bash, Write
+skills: [regime-awareness, lookahead-guard]
 permissionMode: default
 maxTurns: 25
 ---

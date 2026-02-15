@@ -5,6 +5,7 @@ description: |
 model: haiku
 color: cyan
 tools: Read, Bash, Write
+skills: [cross-platform-consistency]
 permissionMode: default
 maxTurns: 15
 ---

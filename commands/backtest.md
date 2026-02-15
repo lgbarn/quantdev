@@ -82,12 +82,16 @@ Dispatch a **Strategy Verifier agent** (subagent_type: "quantdev:verifier") with
   - **Unrealistic fills:** All trades filled at exact limit price, no slippage
   - **Survivorship bias:** Strategy only tested on recent data
 
-## Step 6: PostBacktest Hook
+## Step 6: Post-Backtest Integrity Check
 
-The PostBacktest hook fires automatically after backtest completion. It will:
-- Auto-flag suspicious metrics
+After backtest completion, run the integrity check script:
+```bash
+bash "${CLAUDE_PLUGIN_ROOT}/scripts/post-backtest.sh"
+```
+This will:
+- Auto-flag suspicious metrics (Sharpe > 3, win rate > 75%, PF > 4, < 30 trades)
 - Write findings to the strategy journal
-- Update the knowledge base if configured
+- Report severity level (OK, WARNING, CRITICAL)
 
 ## Step 7: Update State & Commit
 

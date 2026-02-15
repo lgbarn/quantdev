@@ -5,6 +5,7 @@ description: |
 model: opus
 color: red
 tools: Read, Bash, Write
+skills: [risk-discipline, regime-awareness]
 permissionMode: default
 maxTurns: 20
 ---

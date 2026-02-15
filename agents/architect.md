@@ -5,6 +5,7 @@ description: |
 model: opus
 color: blue
 tools: Read, Grep, Glob, Write
+skills: [regime-awareness, risk-discipline]
 permissionMode: default
 maxTurns: 20
 ---

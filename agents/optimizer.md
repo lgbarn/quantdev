@@ -5,6 +5,7 @@ description: |
 model: sonnet
 color: magenta
 tools: Read, Bash, Write
+skills: [backtest-integrity, risk-discipline, regime-awareness]
 permissionMode: default
 maxTurns: 25
 ---

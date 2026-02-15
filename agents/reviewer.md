@@ -5,6 +5,7 @@ description: |
 model: sonnet
 color: yellow
 tools: Read, Grep, Glob, Write
+skills: [lookahead-guard, cross-platform-consistency, risk-discipline]
 permissionMode: default
 maxTurns: 20
 ---

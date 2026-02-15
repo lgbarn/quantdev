@@ -5,6 +5,7 @@ description: |
 model: sonnet
 color: green
 tools: Read, Bash, Write
+skills: [backtest-integrity, risk-discipline, regime-awareness]
 permissionMode: default
 maxTurns: 20
 ---
@@ -136,6 +137,7 @@ You MUST:
 - Verify data files exist before running backtests
 - Check data availability before attempting backtest runs
 - Save raw results alongside analysis
+- Run `${CLAUDE_PLUGIN_ROOT}/scripts/post-backtest.sh` after saving results to auto-flag suspicious metrics
 
 You MUST NOT:
 - Run backtests without checking data availability first

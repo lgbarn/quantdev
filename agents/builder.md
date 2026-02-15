@@ -5,6 +5,7 @@ description: |
 model: sonnet
 color: green
 tools: Read, Edit, Write, Bash, Grep, Glob
+skills: [quantdev-tdd, lookahead-guard, cross-platform-consistency]
 permissionMode: default
 maxTurns: 30
 ---
