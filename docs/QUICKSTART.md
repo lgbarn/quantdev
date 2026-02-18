@@ -61,13 +61,13 @@ Quantdev is a Claude Code plugin for systematic trading development. It manages 
 
 ### New Bot Creation
 ```
-/quantdev:bot "EMACrossoverLB"
+/quantdev:bot "EMA Crossover"
   → Strategy Architect designs entry/exit logic and risk parameters
-  → Builder implements in Python or Go following LB conventions
+  → Builder implements in Python or Go following platform naming conventions
   → Reviewer checks trading correctness (lookahead, fills, risk)
   → Strategy Verifier runs integrity checklist and empirical tests
 
-/quantdev:deploy "EMACrossoverLB"
+/quantdev:deploy "EMA Crossover"
   → Builder generates Docker/systemd configs (no live execution)
 ```
 
@@ -77,12 +77,12 @@ Quantdev is a Claude Code plugin for systematic trading development. It manages 
   → Quant Researcher conducts statistical analysis
   → Findings added to knowledge base
 
-/quantdev:backtest "SupertrendLB"
+/quantdev:backtest "SuperTrend"
   → Backtester orchestrates Go engine against local data
   → Analyzes profit factor, Sharpe, drawdown, trade distribution
   → Strategy Verifier checks for overfitting flags
 
-/quantdev:optimize "SupertrendLB --param atr_period"
+/quantdev:optimize "SuperTrend --param atr_period"
   → Optimizer runs parameter sweeps
   → Detects robust plateaus vs brittle peaks
   → Risk Analyst validates position sizing
@@ -95,7 +95,7 @@ Quantdev is a Claude Code plugin for systematic trading development. It manages 
     Stage 1: Trading correctness (lookahead, sessions, fills)
     Stage 2: Code quality and patterns
 
-/quantdev:risk "VWAPReversalLB"
+/quantdev:risk "VWAP Reversal"
   → Risk Analyst validates position sizing
   → Models drawdown scenarios
   → Validates Apex margin requirements
@@ -165,7 +165,7 @@ Backtest orchestration, parameter optimization, statistical validation.
 
 ## Tips
 
-- **All indicators use LB suffix** — KeltnerLB, SupertrendLB, VWAPLB (LB branding convention)
+- **Use platform naming conventions** — each platform has specific naming standards (PascalCase in Go/C#, camelCase in Pine Script/JS, snake_case in Python). No custom suffixes.
 - **Session awareness is critical** — RTH 09:30-16:00 ET, IB 09:30-10:30 ET, OVN 18:00-09:30 ET
 - **Lookahead bias kills strategies** — Reviewer and Strategy Verifier check every implementation
 - **Cross-platform validation catches drift** — Run `/quantdev:validate` after indicator changes

@@ -1,6 +1,6 @@
 {
   "name": "@lgbarn/quantdev",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Trading development plugin: indicators, bots, backtesting, optimization, and quantitative research — from hypothesis to production",
   "keywords": [
     "claude-code-plugin",

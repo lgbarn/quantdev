@@ -71,7 +71,7 @@ Dispatch a **Reviewer agent** (subagent_type: "quantdev:reviewer") with:
 
   **Stage 2 — Code Quality:**
   - Pattern consistency with existing codebase
-  - Naming conventions (LB conventions)
+  - Naming conventions (platform-specific conventions)
   - Test coverage
   - Error handling
   - Platform-specific idioms (Go table-driven tests, Pine Script `barstate`, etc.)

@@ -80,7 +80,7 @@ When running comparison:
 Save results to `.quantdev/strategies/{name}/backtests/{timestamp}-results.md`:
 
 ```markdown
-# Backtest Results: {Name}LB
+# Backtest Results: {Name}
 **Date:** {timestamp}
 **Period:** {start} to {end}
 **Instrument:** {symbol}

@@ -80,7 +80,7 @@ Format:
 - Optimization history with rationale
 
 ```markdown
-## Parameter Reference: {Name}LB
+## Parameter Reference: {Name}
 
 | Parameter | Default | Range | Sensitivity | Notes |
 |-----------|---------|-------|-------------|-------|

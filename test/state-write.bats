@@ -2,7 +2,7 @@
 load test_helper
 
 teardown() {
-    unset QUANTDEV_TEAMS_ENABLED QUANTDEV_LOCK_MAX_RETRIES QUANTDEV_LOCK_RETRY_DELAY 2>/dev/null || true
+    unset CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS QUANTDEV_LOCK_MAX_RETRIES QUANTDEV_LOCK_RETRY_DELAY 2>/dev/null || true
     # Kill any lingering background state-write processes
     jobs -p 2>/dev/null | xargs kill 2>/dev/null || true
 }
@@ -165,9 +165,9 @@ teardown() {
 # --- Teams-aware locking tests ---
 
 # bats test_tags=unit
-@test "state-write: skips locking when QUANTDEV_TEAMS_ENABLED is unset" {
+@test "state-write: skips locking when CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS is unset" {
     setup_quantdev_dir
-    unset QUANTDEV_TEAMS_ENABLED 2>/dev/null || true
+    unset CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS 2>/dev/null || true
     bash "$STATE_WRITE" --phase 1 --position "solo write" --status ready
 
     # Compute what the lock path would be and verify it does NOT exist
@@ -175,7 +175,7 @@ teardown() {
 }
 
 # bats test_tags=integration
-@test "state-write: acquires mkdir lock when QUANTDEV_TEAMS_ENABLED=true" {
+@test "state-write: acquires mkdir lock when CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1" {
     setup_quantdev_dir
 
     # Compute the expected lock path
@@ -186,7 +186,7 @@ teardown() {
     mkdir -p "$lock_dir"
 
     # Start state-write in background — it should retry while lock exists
-    export QUANTDEV_TEAMS_ENABLED=true
+    export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1
     bash "$STATE_WRITE" --phase 1 --position "team write" --status ready &
     local writer_pid=$!
 
@@ -209,7 +209,7 @@ teardown() {
 # bats test_tags=unit
 @test "state-write: cleans up lock on exit" {
     setup_quantdev_dir
-    export QUANTDEV_TEAMS_ENABLED=true
+    export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1
 
     bash "$STATE_WRITE" --phase 1 --position "cleanup test" --status ready
 
@@ -230,7 +230,7 @@ teardown() {
 
     # Run state-write with a very small retry count to speed up the test
     # Override MAX_RETRIES via env var — the script should fail with exit 4 (lock timeout)
-    export QUANTDEV_TEAMS_ENABLED=true
+    export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1
     export QUANTDEV_LOCK_MAX_RETRIES=2
     export QUANTDEV_LOCK_RETRY_DELAY=0.05
     run bash "$STATE_WRITE" --phase 1 --position "blocked" --status ready

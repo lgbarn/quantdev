@@ -29,15 +29,15 @@ Extract from the command:
 
 ## Step 2a: Team or Agent Dispatch
 
-**Detection:** Check the `QUANTDEV_TEAMS_ENABLED` environment variable (exported by `scripts/team-detect.sh`). This variable is set to `true` when `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`.
+**Detection:** Check the `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` environment variable. When set to `"1"`, teams are available.
 
-**Prompt (conditional):** If `QUANTDEV_TEAMS_ENABLED=true`, use `AskUserQuestion` with exactly two options:
+**Prompt (conditional):** If `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`, use `AskUserQuestion` with exactly two options:
 - "Team mode (parallel teammates)" — uses TeamCreate/TaskCreate/SendMessage/TeamDelete lifecycle
 - "Agent mode (subagents)" — uses standard Task dispatch (current behavior)
 
 Question text: "Teams available. Use team mode (parallel teammates) or agent mode (subagents)?"
 
-**Silent fallback:** If `QUANTDEV_TEAMS_ENABLED` is `false` or unset, silently set `dispatch_mode` to `agent` with no prompt (zero overhead).
+**Silent fallback:** If `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` is unset or not `"1"`, silently set `dispatch_mode` to `agent` with no prompt (zero overhead).
 
 **Variable storage:** Store the result as `dispatch_mode` (value: `team` or `agent`). This variable is referenced by all subsequent dispatch steps.
 

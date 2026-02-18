@@ -119,7 +119,7 @@ setup_quantdev_empty_json_state() {
 # Default teardown: clean up env vars that tests may set.
 # Individual test files can override this if they need custom teardown.
 teardown() {
-    unset QUANTDEV_IS_TEAMMATE QUANTDEV_TEAMS_ENABLED QUANTDEV_TEAM_NAME \
+    unset QUANTDEV_IS_TEAMMATE QUANTDEV_TEAM_NAME \
         QUANTDEV_DISABLE_HOOKS QUANTDEV_SKIP_HOOKS QUANTDEV_LOCK_MAX_RETRIES \
         QUANTDEV_LOCK_RETRY_DELAY \
         CLAUDE_CODE_TEAM_NAME CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS \

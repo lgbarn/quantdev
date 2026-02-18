@@ -26,6 +26,21 @@ If no strategy name is provided, ask the user:
 2. If `.quantdev/config.json` exists, read execution stack, session times, and model routing.
 3. Follow **Worktree Protocol** (see `docs/PROTOCOLS.md`) — detect worktree context.
 
+## Step 2a: Team or Agent Dispatch
+
+**Detection:** Check the `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` environment variable. When set to `"1"`, teams are available.
+
+**Prompt (conditional):** If `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`, use `AskUserQuestion` with exactly two options:
+- "Team mode (parallel teammates)" — uses TeamCreate/TaskCreate/SendMessage/TeamDelete lifecycle
+- "Agent mode (subagents)" — uses standard Task dispatch (current behavior)
+- Question text: "Teams available. Use team mode (parallel teammates) or agent mode (subagents)?"
+
+**Silent fallback:** If `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` is unset or not `"1"`, silently set `dispatch_mode` to `agent` with no prompt (zero overhead).
+
+**Variable storage:** Store the result as `dispatch_mode` (value: `team` or `agent`). This variable is referenced by all subsequent dispatch steps.
+
+**Note:** For the bot command, the pipeline is mostly sequential (architect → builder → reviewer → verifier). Team mode applies when the reviewer sends fixes back to the builder (parallel review+fix cycles). Single-agent steps always use Task dispatch regardless of `dispatch_mode`.
+
 ## Step 3: Template Detection
 
 If `--template` was provided OR if the strategy name matches a known template name:

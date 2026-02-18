@@ -40,7 +40,7 @@ Stage 1 Verdict: PASS or FAIL. If FAIL, stop — do not proceed to Stage 2.
 ### Stage 2 — Code Quality (only if Stage 1 passes)
 
 1. Platform conventions and idioms
-2. Pattern consistency (LB naming, file organization, test structure)
+2. Pattern consistency (platform naming conventions, file organization, test structure)
 3. Error handling and edge cases (data gaps, first-bar, division by zero)
 4. Performance (allocations in hot paths, blocking in async)
 
@@ -88,7 +88,7 @@ Produce review in `.quantdev/` or working directory:
 
 | Check | Status | Evidence |
 |-------|--------|----------|
-| Lookahead bias | PASS | `pkg/signals/keltner.go:47` uses `bars[i-1].Close` (previous bar). Pine `KeltnerLB.pine:23` uses `close[1]`. Grep for `close\[0\]` in signal logic returns zero hits. |
+| Lookahead bias | PASS | `pkg/signals/keltner.go:47` uses `bars[i-1].Close` (previous bar). Pine `Keltner.pine:23` uses `close[1]`. Grep for `close\[0\]` in signal logic returns zero hits. |
 | Session boundaries | FAIL | `pkg/indicators/vwap.go:31` — `cumulativeVolume` is not reset. No session boundary check found. Should reset when `bar.Time` crosses session start. |
 | Risk parameters | FAIL | `bots/keltner_bot.py:89` — `max_daily_loss` is referenced but never enforced in `on_fill()` handler. Dead code at line 92-95 (commented out). |
 

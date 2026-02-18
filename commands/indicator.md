@@ -38,6 +38,21 @@ Use `AskUserQuestion` with 1 question:
    - `All platforms` — Go, Python, Pine Script, NinjaScript, Tradovate JS. Full coverage.
    - (User can also specify custom selection via "Other")
 
+## Step 3a: Team or Agent Dispatch
+
+**Detection:** Check the `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` environment variable. When set to `"1"`, teams are available.
+
+**Prompt (conditional):** If `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`, use `AskUserQuestion` with exactly two options:
+- "Team mode (parallel teammates)" — uses TeamCreate/TaskCreate/SendMessage/TeamDelete lifecycle
+- "Agent mode (subagents)" — uses standard Task dispatch (current behavior)
+- Question text: "Teams available. Use team mode (parallel teammates) or agent mode (subagents)?"
+
+**Silent fallback:** If `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` is unset or not `"1"`, silently set `dispatch_mode` to `agent` with no prompt (zero overhead).
+
+**Variable storage:** Store the result as `dispatch_mode` (value: `team` or `agent`). This variable is referenced by all subsequent dispatch steps.
+
+**Note:** Team mode provides parallelism benefit when building for multiple platforms in Step 5 (parallel builders per platform). Single-agent steps (architect, reviewer) always use Task dispatch regardless of `dispatch_mode`.
+
 </prerequisites>
 
 <execution>
@@ -71,10 +86,27 @@ For each target platform, dispatch a **Builder agent** (subagent_type: "quantdev
   - **Pine Script:** `indicator()` declaration, `plot()` calls, `barstate` awareness
   - **NinjaScript C#:** `OnBarClose()` lifecycle, `AddPlot()`, ISeries pattern
   - **Tradovate JS:** Module exports, `map()` pattern, `init()`/`next()` lifecycle
-- Instruction: Implement the indicator for {platform}. Write failing tests first (golden-file pattern), then implement. Follow LB naming conventions.
+- Instruction: Implement the indicator for {platform}. Write failing tests first (golden-file pattern), then implement. Follow platform-specific naming conventions (see builder agent for the naming table).
 
-If multiple Tier 1 platforms are selected, dispatch them in parallel.
+**If dispatch_mode is agent:**
+If multiple Tier 1 platforms are selected, dispatch them in parallel using Task tool calls.
 Tier 2 and Tier 3 platforms should be dispatched after Tier 1 completes (Tier 1 is source of truth).
+
+**If dispatch_mode is team:**
+- `TeamCreate(name: "quantdev-indicator-{indicator-name}")` — create team for parallel platform builds
+- `TaskCreate` for each platform build with full context (design, platform idioms, naming conventions)
+- `TaskUpdate` to pre-assign owners BEFORE spawning teammates (avoids race conditions)
+- `Task(team_name, name, subagent_type: "quantdev:builder")` to spawn each builder teammate
+- `TaskList` to monitor progress (poll until all builds complete)
+- Tier 2 and Tier 3 platforms dispatch AFTER Tier 1 completes (Tier 1 is source of truth)
+
+## Step 5a: Team Cleanup (team mode only)
+
+**This section applies only when `dispatch_mode` is `team`.**
+
+After all builders complete, run `SendMessage(shutdown_request)` to each teammate, then `TeamDelete`.
+
+**Critical rule:** If `dispatch_mode` is `team` and you are about to exit early (error or user cancellation), you MUST run SendMessage(shutdown_request) + TeamDelete. Never leave orphaned teams running.
 
 ## Step 6: Reviewer — Check for Trading Bugs
 

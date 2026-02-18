@@ -91,7 +91,7 @@ Optimizer → Risk Analyst
   - Cannot reference current bar's close in entry/exit logic (lookahead bias)
   - Cannot create bots without risk parameters
   - Stops on checkpoints for human verification/decision
-- **Platform expertise:** Pine Script `indicator()` idioms, NinjaScript `OnBarClose()` lifecycle, Go table-driven tests, Python async patterns, LB naming conventions
+- **Platform expertise:** Pine Script `indicator()` idioms, NinjaScript `OnBarClose()` lifecycle, Go table-driven tests, Python async patterns, platform-specific naming conventions
 
 ### Reviewer
 

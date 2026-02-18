@@ -86,9 +86,10 @@ Agents are specialized subagents dispatched by commands.
 
 ## Trading-Specific Conventions
 
-### LB Branding
-- All indicators and strategies use LB suffix: KeltnerLB, SupertrendLB, VWAPLB
-- This is a hard requirement — reject PRs without LB suffix
+### Naming Conventions
+- All indicators and strategies use platform-specific naming conventions (no custom suffixes)
+- Go: PascalCase types, snake_case files. Python: PEP 8 snake_case. Pine Script: camelCase vars, UPPER_CASE constants. NinjaScript: PascalCase matching filename. Tradovate: short descriptions.
+- See the builder agent's Platform Naming Conventions table for the full reference
 
 ### Session Awareness
 - All times in America/New_York (ET)
@@ -133,7 +134,7 @@ Before submitting a pull request:
 2. **ShellCheck passes**: Run `shellcheck --severity=warning scripts/*.sh hooks/*.sh test/run.sh` with no errors.
 3. **No duplicated content**: Ensure documentation is not repeated across files.
 4. **Conventional commits**: Use the format `type(scope): description`. See `docs/PROTOCOLS.md` for the full commit convention.
-5. **LB suffix required**: All new indicators and strategies must use LB suffix.
+5. **Platform naming conventions**: All new indicators and strategies must follow platform-specific naming standards (see builder agent).
 6. **Session awareness validated**: Any time-dependent code must handle session boundaries correctly.
 
 ## Markdown Style Guide

@@ -36,11 +36,11 @@ Use STATE.json to determine the current track and active work. Use PROJECT.md fo
 
 <example description="Correct state loading for strategy work">
 1. Read STATE.json → `jq -r '.active_track' .quantdev/STATE.json` → "bot"
-2. Read STATE.json → `jq -r '.current_strategy' .quantdev/STATE.json` → "KeltnerLB"
-3. Read .quantdev/strategies/KeltnerLB/HYPOTHESIS.md → Strategy thesis and parameters
-4. Read .quantdev/strategies/KeltnerLB/JOURNAL.md → Recent observations and changes
+2. Read STATE.json → `jq -r '.current_strategy' .quantdev/STATE.json` → "KeltnerBreakout"
+3. Read .quantdev/strategies/keltner-breakout/HYPOTHESIS.md → Strategy thesis and parameters
+4. Read .quantdev/strategies/keltner-breakout/JOURNAL.md → Recent observations and changes
 5. Read .quantdev/KNOWLEDGE.md → Market observations relevant to Keltner strategies
-6. Conclusion: Resume bot development for KeltnerLB strategy
+6. Conclusion: Resume bot development for KeltnerBreakout strategy
 </example>
 
 ---
@@ -433,7 +433,7 @@ History entries are automatically appended to `.quantdev/HISTORY.md` by state-wr
 
 <rules>
 - Always commit STATE.json updates along with related artifacts in the same commit
-- Position should be specific enough to enable resume (e.g., "KeltnerLB building, tests passing" not just "building")
+- Position should be specific enough to enable resume (e.g., "KeltnerBreakout building, tests passing" not just "building")
 - Status transitions follow work type: ready → designing/building/backtesting/optimizing/researching/validating/deploying → complete
 - Always use state-write.sh to update state — do not manually edit STATE.json
 </rules>
@@ -444,14 +444,14 @@ Before STATE.json:
 {
   "last_updated": "2026-02-14",
   "active_track": "indicator",
-  "current_strategy": "KeltnerLB",
+  "current_strategy": "KeltnerBreakout",
   "status": "ready"
 }
 ```
 
 After running:
 ```bash
-bash scripts/state-write.sh --track indicator --strategy KeltnerLB --status designing
+bash scripts/state-write.sh --track indicator --strategy KeltnerBreakout --status designing
 ```
 
 STATE.json now contains:
@@ -459,7 +459,7 @@ STATE.json now contains:
 {
   "last_updated": "2026-02-14",
   "active_track": "indicator",
-  "current_strategy": "KeltnerLB",
+  "current_strategy": "KeltnerBreakout",
   "status": "designing"
 }
 ```
@@ -594,10 +594,10 @@ Use conventional commit format: `type(scope): description`
 **Trading-specific scopes:**
 | Scope | Usage |
 |-------|-------|
-| `(keltner)` | KeltnerLB indicator or strategy |
-| `(vwap)` | VWAPLB indicator or strategy |
-| `(supertrend)` | SupertrendLB indicator or strategy |
-| `(ema)` | EMALB indicator or strategy |
+| `(keltner)` | Keltner Channel indicator or strategy |
+| `(vwap)` | VWAP indicator or strategy |
+| `(supertrend)` | SuperTrend indicator or strategy |
+| `(ema)` | EMA indicator or strategy |
 | `(backtest)` | Backtest engine or results |
 | `(optimize)` | Optimization tooling |
 | `(risk)` | Risk analysis or position sizing |
@@ -607,7 +607,7 @@ Use conventional commit format: `type(scope): description`
 - Scope should match the indicator, bot, or component affected (e.g., `keltner`, `vwap`, `backtest`)
 - Description should be imperative mood, lowercase, no period: "add ATR filter" not "Added ATR filter."
 - Keep the first line under 72 characters
-- Use LB suffix in scope when referring to specific strategies: `feat(keltner): add ATR period sensitivity filter`
+- Use the indicator's common name as scope: `feat(keltner): add ATR period sensitivity filter`
 </rules>
 
 <example description="Good vs bad commit messages">
@@ -633,14 +633,14 @@ Standardize the detect/ask/branch pattern used by multi-agent commands (build, p
 </purpose>
 
 <instructions>
-1. **Detect:** Check `QUANTDEV_TEAMS_ENABLED` environment variable (exported by `scripts/team-detect.sh`). Set to `true` when `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`.
+1. **Detect:** Check `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` environment variable. When set to `"1"`, teams are available.
 
-2. **Prompt (conditional):** If `QUANTDEV_TEAMS_ENABLED=true`, use `AskUserQuestion` with exactly two options:
+2. **Prompt (conditional):** If `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`, use `AskUserQuestion` with exactly two options:
    - "Team mode (parallel teammates)" — uses TeamCreate/TaskCreate/SendMessage/TeamDelete lifecycle
    - "Agent mode (subagents)" — uses standard Task dispatch (current behavior)
    - Question text: "Teams available. Use team mode (parallel teammates) or agent mode (subagents)?"
 
-3. **Silent fallback:** If `QUANTDEV_TEAMS_ENABLED` is `false` or unset, silently set `dispatch_mode` to `agent` with no prompt (zero overhead).
+3. **Silent fallback:** If `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` is unset or not `"1"`, silently set `dispatch_mode` to `agent` with no prompt (zero overhead).
 
 4. **Variable storage:** Store the result as `dispatch_mode` (value: `team` or `agent`). This variable is referenced by all subsequent dispatch steps in the command.
 

@@ -44,7 +44,7 @@ _release_lock() {
     fi
 }
 
-if [ "${QUANTDEV_TEAMS_ENABLED:-}" = "true" ]; then
+if [ "${CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS:-}" = "1" ]; then
     # Compute per-project lock path using hash of .quantdev absolute path
     QUANTDEV_DIR_HASH=$(cd .quantdev && pwd | (sha256sum 2>/dev/null || md5sum 2>/dev/null || cksum) | cut -d' ' -f1 | cut -c1-12)
     LOCK_DIR="${TMPDIR:-/tmp}/quantdev-state-${QUANTDEV_DIR_HASH}.lock"

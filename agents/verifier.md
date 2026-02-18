@@ -94,7 +94,7 @@ Every PASS verdict must include:
 Produce `.quantdev/strategies/{name}/VERIFICATION.md`:
 
 ```markdown
-# Strategy Verification: {Name}LB
+# Strategy Verification: {Name}
 
 ## Stage 1: Code Integrity
 **Verdict:** PASS | FAIL
@@ -137,7 +137,7 @@ Produce `.quantdev/strategies/{name}/VERIFICATION.md`:
 <example type="good">
 | Check | Status | Evidence |
 |-------|--------|----------|
-| Lookahead bias | PASS | Inspected `pkg/signals/keltner.go:47` — entry signal uses `close[1]` (previous bar). Pine Script `KeltnerLB.pine:23` uses `close[1]` in condition. No current-bar close references found via grep `close\[0\]` in signal logic. |
+| Lookahead bias | PASS | Inspected `pkg/signals/keltner.go:47` — entry signal uses `close[1]` (previous bar). Pine Script `Keltner.pine:23` uses `close[1]` in condition. No current-bar close references found via grep `close\[0\]` in signal logic. |
 | Fill assumptions | FAIL | `pkg/engine/backtest.go:112` — market order fill uses `entry_price = signal_bar.Close` with no slippage offset. Should be `signal_bar.Close + slippage_ticks * tick_size`. |
 
 This is good because: specific file:line references, code snippets showing what was found, clear explanation of why it passes or fails.

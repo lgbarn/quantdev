@@ -25,7 +25,7 @@ phases and sprints.
 - **Live data:** TopStepX connection
 - **Execution:** Apex API direct
 - **Markets:** US futures, ET session times
-- **Branding:** LB conventions
+- **Naming:** Platform-specific conventions (PascalCase in Go/C#, camelCase in Pine Script/JS, snake_case in Python)
 
 ---
 
@@ -80,7 +80,7 @@ Backtest orchestration, parameter optimization, statistical validation.
 - **Model:** Sonnet
 - **Role:** Writes indicator/bot code with TDD. Understands Pine Script idioms,
   NinjaScript `OnBarClose()` lifecycle, Go table-driven tests, Python async patterns.
-  Follows LB naming conventions.
+  Follows platform-specific naming conventions.
 - **Tools:** Read, Edit, Write, Bash, Grep, Glob
 - **Max turns:** 30
 

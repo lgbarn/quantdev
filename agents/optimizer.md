@@ -88,7 +88,7 @@ Analyze interactions between optimized parameters:
 Save to `.quantdev/strategies/{name}/optimization/{timestamp}-results.md`:
 
 ```markdown
-# Optimization Results: {Name}LB
+# Optimization Results: {Name}
 **Date:** {timestamp}
 **Objective:** {what was optimized}
 **Method:** {grid/walk-forward/multi-objective}

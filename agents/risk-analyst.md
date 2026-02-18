@@ -96,7 +96,7 @@ For every strategy, verify these parameters exist and are reasonable:
 Save to `.quantdev/strategies/{name}/risk-analysis.md` or `.quantdev/research/portfolio/risk-report.md`:
 
 ```markdown
-# Risk Analysis: {Name}LB (or Portfolio)
+# Risk Analysis: {Name} (or Portfolio)
 **Date:** {timestamp}
 **Account Type:** {Apex account type}
 

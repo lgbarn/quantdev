@@ -84,7 +84,7 @@ Many indicators need warmup bars (e.g., EMA needs N bars before output stabilize
 Save to `.quantdev/validation/{indicator}-validation.md`:
 
 ```markdown
-# Cross-Platform Validation: {Indicator}LB
+# Cross-Platform Validation: {Indicator}
 **Date:** {timestamp}
 **Parameters:** {param list}
 **Epsilon:** {tolerance}

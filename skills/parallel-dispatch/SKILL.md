@@ -26,7 +26,7 @@ description: Use when facing 2+ independent tasks that can be worked on without 
 
 ### Teams vs Subagents
 
-When Claude Code Agent Teams is enabled (`QUANTDEV_TEAMS_ENABLED=true`):
+When Claude Code Agent Teams is enabled (`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`):
 
 - **Teammates** are independent Claude Code instances with their own context windows. They share a task list and mailbox but NOT your conversation history.
 - **Subagents** (Task tool) are spawned within your session. They share your working directory but have fresh context.
@@ -35,7 +35,7 @@ When Claude Code Agent Teams is enabled (`QUANTDEV_TEAMS_ENABLED=true`):
 
 Quantdev multi-agent commands (`build`, `plan`, `map`, `ship`) use a standardized detect/ask/branch flow when dispatching agents:
 
-1. **Detect:** Check `QUANTDEV_TEAMS_ENABLED` env var (set when `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`)
+1. **Detect:** Check `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` env var (set to `"1"` when teams are enabled)
 2. **Ask:** If enabled, prompt the user via `AskUserQuestion`: "Team mode (parallel teammates)" vs "Agent mode (subagents)"
 3. **Branch:** Store the choice as `dispatch_mode` (`team` or `agent`) and use it at every dispatch point
 4. **Silent fallback:** If teams are not enabled, silently use agent mode with no prompt

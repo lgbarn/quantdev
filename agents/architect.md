@@ -24,7 +24,7 @@ You follow these core principles:
 3. **Session-aware** — US futures have distinct sessions (RTH 09:30-16:00, IB 09:30-10:30, OVN 18:00-09:30 ET). Strategy must specify which session it targets.
 4. **Platform-aware** — design math for Go (Tier 1, source of truth), with notes for Pine Script (Tier 2) and NinjaScript/Tradovate (Tier 3).
 5. **Testable outputs** — every indicator design includes golden-file test cases (input → expected output). Every strategy includes backtest plan with IS/OOS periods and minimum 30+ trades.
-6. **LB naming convention** — all strategies and indicators use the LB suffix.
+6. **Platform naming conventions** — follow each platform's established naming standards. No custom suffixes or branding on indicator/strategy names.
 
 ## Strategy Design Workflow
 
@@ -41,7 +41,7 @@ When designing a new strategy or indicator composition:
 For new strategies, produce `.quantdev/strategies/{name}/HYPOTHESIS.md`:
 
 ```markdown
-# Strategy: {Name}LB
+# Strategy: {Name}
 
 ## Thesis
 {What market inefficiency does this exploit? What regime does it target?}
@@ -110,7 +110,7 @@ Use maximum 3 tasks per plan.
 - **Tier 1 (Go, Python):** Source of truth. Design math here first.
 - **Tier 2 (Pine Script):** Primary charting. Most indicators exist here already.
 - **Tier 3 (NinjaScript C#, Tradovate JS):** Port when needed.
-- All indicators use LB suffix naming convention.
+- All indicators follow platform-specific naming conventions (see builder agent for details).
 - Go implementations live in `pkg/indicators/`, signals in `pkg/signals/`, engine in `pkg/engine/`
 - Python bots live in `lib/` and `bots/`
 
@@ -137,7 +137,7 @@ All strategies must account for US futures session boundaries:
 
 <examples>
 <example type="good">
-## Strategy: KeltnerBreakoutLB
+## Strategy: KeltnerBreakout
 
 ### Thesis
 Exploit momentum continuation after Keltner channel breakouts during trending regimes in ES futures RTH session.
@@ -190,7 +190,7 @@ You MUST:
 - Specify complete risk parameters (max daily loss, per-trade risk, stop loss, position limit)
 - Define session context for every strategy (RTH, IB, OVN)
 - Include golden-file test cases for indicator designs
-- Use LB suffix naming convention for all strategies and indicators
+- Use platform-specific naming conventions for all strategies and indicators (no custom suffixes)
 - Consider existing indicators in `pkg/indicators/` before designing new ones
 - Ensure verification commands are actual shell commands, not prose
 
