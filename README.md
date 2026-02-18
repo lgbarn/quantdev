@@ -257,7 +257,7 @@ When you run `/quantdev:init`, quantdev creates a `.quantdev/config.json` in you
 
 Quantdev supports [Claude Code Agent Teams](https://docs.anthropic.com/en/docs/claude-code) — an experimental feature where multiple independent Claude Code instances collaborate on the same project.
 
-Quantdev automatically detects the teams environment via `CLAUDE_CODE_TEAM_NAME` and `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` environment variables. No configuration needed.
+When `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` is set, multi-agent commands (`/quantdev:indicator`, `/quantdev:bot`, `/quantdev:map`) prompt you to choose between team mode (parallel teammates via TeamCreate) and agent mode (standard Task subagents). Teammate detection uses `CLAUDE_CODE_TEAM_NAME` automatically.
 
 See [docs/AGENT-TEAMS-GUIDE.md](docs/AGENT-TEAMS-GUIDE.md) for the full guide.
 

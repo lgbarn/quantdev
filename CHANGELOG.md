@@ -4,6 +4,35 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [1.1.0] - 2026-02-17
+
+### Changed
+
+#### Platform Naming Conventions
+- Removed all custom LB suffix branding from indicators and strategies
+- Added comprehensive platform naming conventions table to the Builder agent covering Go, Python, Pine Script, NinjaScript C#, and Tradovate JS
+- Indicators now use standard names (e.g., `Keltner`, `SuperTrend`, `VWAP`) instead of `KeltnerLB`, `SuperTrendLB`, `VWAPLB`
+
+#### Platform-Specific Best Practices
+- **Go**: `PascalCase` types, `DefaultXxxPeriod` constants (not ALL_CAPS), `NewXxx()` constructors, no package stuttering
+- **Python**: PEP 8 — `snake_case` functions/variables, `UPPER_CASE` module constants, `PascalCase` classes
+- **Pine Script**: `camelCase` variables, `UPPER_CASE` constants, `xxxInput` suffix for inputs, Title Case in `indicator(title=)`
+- **NinjaScript C#**: Class name must match `.cs` filename, `PascalCase` properties, `_camelCase` private fields
+- **Tradovate JS**: Short, concise descriptions (long descriptions look unprofessional in the indicator list)
+
+#### Team Detection
+- Removed `QUANTDEV_TEAMS_ENABLED` wrapper variable — all checks now use `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` directly
+- Added Team Dispatch step to `/quantdev:indicator` and `/quantdev:bot` commands (matching Shipyard's pattern)
+- Updated `team-detect.sh` to only export `QUANTDEV_IS_TEAMMATE` and `QUANTDEV_TEAM_NAME`
+- Updated `state-write.sh` locking to check `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` directly
+
+### Updated
+- All 11 agent files to use platform-specific naming conventions
+- `CONTRIBUTING.md`, `QUICKSTART.md`, `AGENT-GUIDE.md`, `PROTOCOLS.md` to remove LB references
+- `commands/indicator.md`, `commands/bot.md`, `commands/review.md`, `commands/map.md`
+- `skills/parallel-dispatch/SKILL.md`
+- All team-related tests (`team-detect.bats`, `state-write.bats`, `team-hooks.bats`, `test_helper.bash`)
+
 ## [1.0.0] - 2026-02-14
 
 Initial release of quantdev — a Claude Code plugin for systematic trading development.
